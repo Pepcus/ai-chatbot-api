@@ -1,217 +1,51 @@
-import os
-from dotenv import load_dotenv, find_dotenv
-
-import numpy as np
-from trulens_eval import (
-    Feedback,
-    TruLlama,
-    TruChain,
-    OpenAI
-)
-
-load_dotenv()
-
-from trulens_eval.feedback import Groundedness
-import nest_asyncio
-
-nest_asyncio.apply()
-
-
-def get_openai_api_key():
-    _ = load_dotenv(find_dotenv())
-
-    return os.getenv("OPENAI_API_KEY")
-
-
-def get_hf_api_key():
-    _ = load_dotenv(find_dotenv())
-
-    return os.getenv("HUGGINGFACE_API_KEY")
-
-openai = OpenAI()
-
-qa_relevance = (
-    Feedback(openai.relevance_with_cot_reasons, name="Answer Relevance")
-    .on_input_output()
-)
-
-qs_relevance = (
-    Feedback(openai.relevance_with_cot_reasons, name = "Context Relevance")
-    .on_input()
-    .on(TruLlama.select_source_nodes().node.text)
-    .aggregate(np.mean)
-)
-
-#grounded = Groundedness(groundedness_provider=openai, summarize_provider=openai)
-grounded = Groundedness(groundedness_provider=openai)
-
-groundedness = (
-    Feedback(grounded.groundedness_measure_with_cot_reasons, name="Groundedness")
-        .on(TruLlama.select_source_nodes().node.text)
-        .on_output()
-        .aggregate(grounded.grounded_statements_aggregator)
-)
-
-feedbacks = [qa_relevance, qs_relevance, groundedness]
-
-def get_trulens_recorder(query_engine, feedbacks, app_id):
-    tru_recorder = TruLlama(
-        query_engine,
-        app_id=app_id,
-        feedbacks=feedbacks
-    )
-    return tru_recorder
-
-def get_prebuilt_trulens_recorder(query_engine, app_id):
-    tru_recorder = TruLlama(
-        query_engine,
-        app_id=app_id,
-        feedbacks=feedbacks
-        )
-    return tru_recorder
-
-def get_prebuilt_trulens_recorder_chain(query_engine, app_id):
-    tru_recorder = TruChain(
-        query_engine,
-        app_id=app_id,
-        feedbacks=feedbacks
-        )
-    return tru_recorder
-
-from llama_index.core import ServiceContext, VectorStoreIndex, StorageContext
-from llama_index.core.node_parser import SentenceWindowNodeParser
-from llama_index.core.indices.postprocessor import MetadataReplacementPostProcessor
-from llama_index.core.indices.postprocessor import SentenceTransformerRerank
-from llama_index.core import load_index_from_storage
+from dotenv import load_dotenv
+from llama_index.core import VectorStoreIndex
 from llama_index.vector_stores.pinecone import PineconeVectorStore
 from llama_index.core.retrievers import VectorIndexRetriever
-from pinecone import Pinecone, ServerlessSpec
-pc = Pinecone(api_key=os.environ['PINECONE_API_KEY'])
+from pinecone import ServerlessSpec
+from llama_index.core.query_engine import RetrieverQueryEngine
+from llama_index.core.node_parser import SemanticSplitterNodeParser
+from llama_index.core.ingestion import IngestionPipeline
+import nest_asyncio
 
-import os
+load_dotenv()
+nest_asyncio.apply()
 
-
-def build_sentence_window_index(
-    document, llm, index_name, embed_model="local:BAAI/bge-small-en-v1.5"
+def build_pinecone_index(
+    pc,    
+    documents,
+    index_name,
+    embed_model
 ):
-    print("=============before node parser==============")
-    # create the sentence window node parser w/ default settings
-    node_parser = SentenceWindowNodeParser.from_defaults(
-        window_size=3,
-        window_metadata_key="window",
-        original_text_metadata_key="original_text",
-    )
-    print("=============before service context==============")
-
-    sentence_context = ServiceContext.from_defaults(
-        llm=llm,
-        embed_model=embed_model,
-        node_parser=node_parser,
-    )
-    #sentence_index = VectorStoreIndex.from_documents(
-    #        [document], service_context=sentence_context
-    #)
-    print("=============before creating index ==============", index_name)
-
-    index = pc.create_index(
-        name=index_name,
-        dimension=384,
+    pc.create_index(
+        index_name,
+        dimension=1536,
         metric="cosine",
         spec=ServerlessSpec(cloud="aws", region="us-east-1"),
     )
-    print("=============before vector store==============")
-
-    vector_store = PineconeVectorStore(index_name=index_name, pinecone_index=index)
-    print("=============before storage context==============")
-
-    storage_context = StorageContext.from_defaults(vector_store=vector_store)
-    #print("=============before vectorstoreindex==============")
-
-    index = VectorStoreIndex.from_documents(
-        [document], storage_context=storage_context, service_context=sentence_context
+    pinecone_index = pc.Index(index_name)
+    vector_store = PineconeVectorStore(pinecone_index=pinecone_index)
+    pipeline = IngestionPipeline(
+    transformations=[
+        SemanticSplitterNodeParser(
+            buffer_size=1,
+            breakpoint_percentile_threshold=95, 
+            embed_model=embed_model,
+            ),
+        embed_model,
+        ],
+        vector_store=vector_store
     )
-    print("=============before returning==============")
+    pipeline.run(documents=documents)
 
-    return index
-
-
-def get_sentence_window_query_engine(
-    index_name,
-    similarity_top_k=6,
-    rerank_top_n=2,
-):
-    # define postprocessors
-    postproc = MetadataReplacementPostProcessor(target_metadata_key="window")
-    rerank = SentenceTransformerRerank(
-        top_n=rerank_top_n, model="BAAI/bge-reranker-base"
-    )
-    index = pc.Index(index_name)
-    print(index.describe_index_stats())
-
-    vector_store = PineconeVectorStore(pinecone_index=index)
-    vector_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
-    retriever = VectorIndexRetriever(index=vector_index, similarity_top_k=1)
-    query_engine = RetrieverQueryEngine(retriever=retriever)
-
-    #sentence_window_engine = index.as_retriever()(
-    #    similarity_top_k=similarity_top_k, node_postprocessors=[postproc, rerank]
-    #)
+def get_pinecone_query_engine(pc, index_name):
+    try:
+        automerging_index = pc.Index(index_name)
+        print(automerging_index.describe_index_stats())
+        vector_store = PineconeVectorStore(pinecone_index=automerging_index)
+        vector_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
+        retriever = VectorIndexRetriever(index=vector_index, similarity_top_k=5)
+        query_engine = RetrieverQueryEngine(retriever=retriever)
+    except Exception as re:
+        print(re)
     return query_engine
-
-
-from llama_index.core.node_parser import HierarchicalNodeParser
-
-from llama_index.core.node_parser import get_leaf_nodes
-from llama_index.core import StorageContext
-from llama_index.core.retrievers import AutoMergingRetriever
-from llama_index.core.indices.postprocessor import SentenceTransformerRerank
-from llama_index.core.query_engine import RetrieverQueryEngine
-
-
-def build_automerging_index(
-    documents,
-    llm,
-    embed_model="local:BAAI/bge-small-en-v1.5",
-    save_dir="merging_index",
-    chunk_sizes=None,
-):
-    chunk_sizes = chunk_sizes or [2048, 512, 128, 32]
-    node_parser = HierarchicalNodeParser.from_defaults(chunk_sizes=chunk_sizes)
-    nodes = node_parser.get_nodes_from_documents(documents)
-    leaf_nodes = get_leaf_nodes(nodes)
-    merging_context = ServiceContext.from_defaults(
-        llm=llm,
-        embed_model=embed_model,
-    )
-    storage_context = StorageContext.from_defaults()
-    storage_context.docstore.add_documents(nodes)
-
-    if not os.path.exists(save_dir):
-        automerging_index = VectorStoreIndex(
-            leaf_nodes, storage_context=storage_context, service_context=merging_context
-        )
-        automerging_index.storage_context.persist(persist_dir=save_dir)
-    else:
-        automerging_index = load_index_from_storage(
-            StorageContext.from_defaults(persist_dir=save_dir),
-            service_context=merging_context,
-        )
-    return automerging_index
-
-
-def get_automerging_query_engine(
-    automerging_index,
-    similarity_top_k=12,
-    rerank_top_n=2,
-):
-    base_retriever = automerging_index.as_retriever(similarity_top_k=similarity_top_k)
-    retriever = AutoMergingRetriever(
-        base_retriever, automerging_index.storage_context, verbose=True
-    )
-    rerank = SentenceTransformerRerank(
-        top_n=rerank_top_n, model="BAAI/bge-reranker-base"
-    )
-    auto_merging_engine = RetrieverQueryEngine.from_args(
-        retriever, node_postprocessors=[rerank]
-    )
-    return auto_merging_engine
