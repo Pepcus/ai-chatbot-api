@@ -25,6 +25,7 @@ def build_pinecone_index(
     )
     pinecone_index = pc.Index(index_name)
     vector_store = PineconeVectorStore(pinecone_index=pinecone_index)
+
     pipeline = IngestionPipeline(
     transformations=[
         SemanticSplitterNodeParser(
@@ -40,9 +41,9 @@ def build_pinecone_index(
 
 def get_pinecone_query_engine(pc, index_name):
     try:
-        automerging_index = pc.Index(index_name)
-        print(automerging_index.describe_index_stats())
-        vector_store = PineconeVectorStore(pinecone_index=automerging_index)
+        pinecone_index = pc.Index(index_name)
+        print(pinecone_index.describe_index_stats())
+        vector_store = PineconeVectorStore(pinecone_index=pinecone_index)
         vector_index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
         retriever = VectorIndexRetriever(index=vector_index, similarity_top_k=5)
         query_engine = RetrieverQueryEngine(retriever=retriever)
