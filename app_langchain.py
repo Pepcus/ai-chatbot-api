@@ -42,6 +42,10 @@ def chunk_data(docs,chunk_size=800,chunk_overlap=50):
 def get_index_name(company):
     return company + "-handbook"
 
+@app.get('/')
+def hello_world():
+    return "Hello,World"
+
 @app.get("/response/")
 def get_response(query: str, company: str):
     index_name = get_index_name(company)

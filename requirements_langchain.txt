@@ -1,13 +1,13 @@
+fastapi
+uvicorn
 unstructured
 tiktoken
-pinecone-client
 pypdf
 openai
 langchain
 pandas 
 numpy
 python-dotenv
-langchain-pinecone 
-langchain-openai 
- 
-pip install --upgrade --quiet  langchain-pinecone langchain-openai langchain unstructured tiktoken pinecone-client pypdf openai langchain pandas numpy python-dotenv
+langchain-pinecone
+langchain-openai
+pinecone-client[grpc]==3.0.0
