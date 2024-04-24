@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_community.utilities import SQLDatabase
 from utils_langchain_pinecone import get_pinecone_query_engine, build_pinecone_index
-from utils_langchain_sql import get_sql_query_engine
+from utils_langchain_sql import get_sql_query_agent
 import os
 from fastapi import FastAPI
 
@@ -17,7 +17,7 @@ load_dotenv()
 embeddings=OpenAIEmbeddings(api_key=os.environ['OPENAI_API_KEY'])
 pc = PineconeGRPC(api_key=os.environ['PINECONE_API_KEY'])
 llm = ChatOpenAI(  
-        openai_api_key=os.environ['OPENAI_API_KEY'],  
+        openai_api_key=os.environ['OPENAI_API_KEY'],
         model_name='gpt-3.5-turbo',  
         temperature=0.0  
     )
@@ -34,9 +34,10 @@ def get_response(query: str, company: str, role: str):
       resp = query_engine.invoke(query)
       response = resp.result
     elif (role == 'DATABASE_MASTER'):
-      query_engine = get_sql_query_engine(db, llm)
-      response = query_engine.invoke({"question": query})
-    print("=======response from API===========", response)
+      agent = get_sql_query_agent(db, llm)
+      resp = agent.invoke({"input": query})
+      response = resp['output']
+      print("=======response from API===========", response)
     return response
 
 @app.post("/index/{company}")
