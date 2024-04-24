@@ -1,16 +1,12 @@
-from langchain_community.document_loaders import PyPDFDirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+
 from langchain_openai import OpenAIEmbeddings
-from langchain_pinecone import Pinecone
-from langchain_pinecone import PineconeVectorStore
-from pinecone import ServerlessSpec
 from pinecone.grpc import PineconeGRPC
 from dotenv import load_dotenv
-from langchain.chains import RetrievalQA
-from langchain_openai import ChatOpenAI  
-from langchain.chains import RetrievalQA 
+from langchain_openai import ChatOpenAI
+from langchain_community.utilities import SQLDatabase
+from utils_langchain_pinecone import get_pinecone_query_engine, build_pinecone_index
+from utils_langchain_sql import get_sql_query_engine
 import os
-
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -25,77 +21,28 @@ llm = ChatOpenAI(
         model_name='gpt-3.5-turbo',  
         temperature=0.0  
     )
-
-## Read the document
-def read_doc(directory):
-    file_loader=PyPDFDirectoryLoader(directory)
-    documents=file_loader.load()
-    return documents
-
-## Divide the docs into chunks
-### https://api.python.langchain.com/en/latest/text_splitter/langchain.text_splitter.RecursiveCharacterTextSplitter.html#
-def chunk_data(docs,chunk_size=800,chunk_overlap=50):
-    text_splitter=RecursiveCharacterTextSplitter(chunk_size=chunk_size,chunk_overlap=chunk_overlap)
-    doc=text_splitter.split_documents(docs)
-    return docs
-
-def get_index_name(company):
-    return company + "-handbook"
+db = SQLDatabase.from_uri(os.environ['PG_DB_URI'])
 
 @app.get('/')
 def hello_world():
     return "Hello,World"
 
 @app.get("/response/")
-def get_response(query: str, company: str):
-    index_name = get_index_name(company)
-
-    index = pc.Index(index_name)
-    text_field = "text"
-
-    vectorstore = Pinecone(
-        index, embeddings, text_field
-    )
-
-    vectorstore.similarity_search(  
-        query,  # our search query  
-        k=3  # return 3 most relevant docs  
-    )  
-   
-    qa = RetrievalQA.from_chain_type(  
-        llm=llm,  
-        chain_type="stuff",
-        retriever=vectorstore.as_retriever()  
-    )
-    response = qa.invoke(query)
+def get_response(query: str, company: str, role: str):
+    if (role == 'HR_ASSISTANT'):
+      query_engine = get_pinecone_query_engine(pc, llm, embeddings, company, query)
+      resp = query_engine.invoke(query)
+      response = resp.result
+    elif (role == 'DATABASE_MASTER'):
+      query_engine = get_sql_query_engine(db, llm)
+      response = query_engine.invoke({"question": query})
+    print("=======response from API===========", response)
     return response
 
-@app.post("/index/{index}")
-def create_index(index: str):
-    index_name = get_index_name(index)
-
-    pc.create_index(
-        name=index_name,
-        dimension=1536,
-        metric="cosine",
-        spec=ServerlessSpec(
-            cloud='aws',
-            region='us-east-1'
-        )
-    )
- 
-    doc=read_doc('documents/')
-    len(doc)
-
-    documents=chunk_data(docs=doc)
-    len(documents)
-
-    # Store in DB and retrieve it
-    PineconeVectorStore.from_documents(documents, embeddings, index_name=index_name)
-
-    index = pc.Index(index_name)
-    index.describe_index_stats()
-    print()
+@app.post("/index/{company}")
+def create_index(company: str):
+    build_pinecone_index(pc, embeddings, company)
+    
 
 if __name__ == '__main__':
     import uvicorn

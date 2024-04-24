@@ -6,6 +6,8 @@ WORKDIR /app
 
 # Copy the FastAPI application code and requirements file into the container
 COPY app_langchain.py .
+COPY utils_langchain_pinecone.py .
+COPY utils_langchain_sql.py .
 COPY requirements_langchain.txt .
 COPY .env .
 
