@@ -11,3 +11,4 @@ python-dotenv
 langchain-pinecone
 langchain-openai
 pinecone-client[grpc]==3.0.0
+psycopg2
