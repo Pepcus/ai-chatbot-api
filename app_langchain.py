@@ -22,6 +22,7 @@ llm = ChatOpenAI(
         temperature=0.0  
     )
 db = SQLDatabase.from_uri(os.environ['PG_DB_URI'])
+bucket_name = os.environ['GCP_BUCKET_NAME']
 
 @app.get('/')
 def hello_world():
@@ -32,18 +33,16 @@ def get_response(query: str, company: str, role: str):
     if (role == 'HR_ASSISTANT'):
       query_engine = get_pinecone_query_engine(pc, llm, embeddings, company, query)
       resp = query_engine.invoke(query)
-      response = resp.result
+      response = resp['result']
     elif (role == 'DATABASE_MASTER'):
       agent = get_sql_query_agent(db, llm)
       resp = agent.invoke({"input": query})
       response = resp['output']
-      print("=======response from API===========", response)
     return response
 
 @app.post("/index/{company}")
 def create_index(company: str):
-    build_pinecone_index(pc, embeddings, company)
-    
+    build_pinecone_index(pc, embeddings, bucket_name, company)
 
 if __name__ == '__main__':
     import uvicorn
