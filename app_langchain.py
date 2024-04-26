@@ -34,6 +34,7 @@ def get_response(query: str, company: str, role: str):
       query_engine = get_pinecone_query_engine(pc, llm, embeddings, company, query)
       resp = query_engine.invoke(query)
       response = resp['result']
+      print("==========response============", response)
     elif (role == 'DATABASE_MASTER'):
       agent = get_sql_query_agent(db, llm)
       resp = agent.invoke({"input": query})
