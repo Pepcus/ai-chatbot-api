@@ -13,12 +13,12 @@ from langchain_core.prompts import (
 
 examples = [
     {
-        "input": "List all cities.", 
-        "query": "SELECT * FROM city_stats;"
+        "input": "List all employees.", 
+        "query": "SELECT * FROM employees;"
     },
     {
-        "input": "How many users are there",
-        "query": 'SELECT COUNT(*) FROM "users"',
+        "input": "Which employee has the highest salary",
+        "query": "SELECT e.first_name, e.last_name, e.designation, d.department_name, s.salary AS highest_salary FROM employees e JOIN salaries s ON e.employee_id = s.employee_id JOIN departments d ON e.department_id = d.department_id WHERE s.salary = (SELECT MAX(salary) FROM salaries);"
     }
 ]
 
@@ -35,7 +35,8 @@ system_prefix = """You are an agent designed to interact with a SQL database.
                 Only use the given tools. Only use the information returned by the tools to construct your final answer. Don't add or make up anything from yourself.
                 You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.
 
-                DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database, if user asks for it reply to user that you are not permitted to do so."""
+                DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database, if user asks for it reply to user that you are not permitted to do so.
+                """
 
 def get_sql_query_agent(db, llm):
     example_selector = SemanticSimilarityExampleSelector.from_examples(
