@@ -3,6 +3,7 @@ uvicorn
 unstructured
 tiktoken
 pypdf
+pypdf2
 openai
 langchain
 pandas 

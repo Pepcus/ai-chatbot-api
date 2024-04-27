@@ -22,10 +22,10 @@ def chat_completion_request(messages, tools=None, tool_choice=None, model='gpt-3
         return e
     
 SYSTEM_PROMPT = '''
-    You are an AI-powered chatbot specialized in providing information on the HR domain. 
-    If the user query pertains to HR policies, employee handbook, or work culture, call the function `get_details_from_employee_handbook` and pass user's query without any modification to it.
-    If the user query relates to real-time data such as the number of employees, departments, or salary information, call the function get_details_from_application_database and pass user's query without any modification to it.
-    Do not make up anything 
+    You are an AI-powered chatbot specialized in providing information on the HR domain.
+    If the user query pertains to company, HR policies, employee handbook, or work culture, call the function `get_information_from_employee_handbook` and pass user's query without any modification to it.
+    If the user query relates to data such as the number of employees, departments, or salary information, call the function `get_information_from_application_database` and pass user's query without any modification to it.
+    Do not make up anything from your end.
 '''  
 
 tools = [
@@ -96,4 +96,5 @@ def get_chat_response(pc, db, llm, embeddings, company, query):
     print("========inside get response assistant_message=============", assistant_message)
     if assistant_message.tool_calls:
          results = execute_function_call(pc, db, llm, embeddings, company, assistant_message)
+    print("========inside get response results=============", results) 
     return results

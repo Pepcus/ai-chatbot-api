@@ -5,10 +5,13 @@ from langchain_pinecone import PineconeVectorStore
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain.agents import initialize_agent
 from pinecone import ServerlessSpec
-from utils_langchain_general import read_doc, chunk_data, delete_file_from_local
+from utils_langchain_general import load_doc, chunk_data, delete_file_from_local
 from utils_langchain_gcp import download_file_from_gcp
 from langchain.agents import Tool
 from openai import OpenAI
+from utils_langchain_preprocessing import clean_up_text
+from utils_langchain_preprocessing import extract_text_from_pdf
+from langchain_community.document_loaders import DirectoryLoader
 import os
 
 load_dotenv()
@@ -16,12 +19,24 @@ load_dotenv()
 def build_pinecone_index(pc, embeddings, bucket_name, index_name):
 
     file_name = index_name + ".pdf"
+    text_file_name = index_name + ".txt"
+    text_file_path = os.environ['LOCAL_DOWNLOAD_PATH'] + text_file_name
     download_file_from_gcp(bucket_name, file_name)
 
-    doc=read_doc(os.environ['LOCAL_DOWNLOAD_PATH'])
-    print(len(doc))
+    #Extract text from pdf
+    extracted_text = extract_text_from_pdf(os.environ['LOCAL_DOWNLOAD_PATH']+file_name)
 
-    documents=chunk_data(docs=doc)
+    #PreProcessing 1 - Cleaning up the extracted_text data
+    cleaned_data = clean_up_text(extracted_text)
+
+    #Writing the cleaned extracted_text data into a text file
+    with open(text_file_path, "w", encoding = 'utf-8') as f:
+        f.write(cleaned_data)
+
+    docs=load_doc(os.environ['LOCAL_DOWNLOAD_PATH'])
+    print(len(docs))
+
+    documents=chunk_data(docs=docs)
     print(len(documents))
 
     index_name = index_name.swapcase()
@@ -41,6 +56,7 @@ def build_pinecone_index(pc, embeddings, bucket_name, index_name):
     index = pc.Index(index_name)
     index.describe_index_stats()
 
+    delete_file_from_local(text_file_name)
     delete_file_from_local(file_name)
     print("====Success=======")
 

@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
-from langchain_community.document_loaders import PyPDFDirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import DirectoryLoader
+from langchain.text_splitter import CharacterTextSplitter
 import os
 
 load_dotenv()
@@ -13,15 +13,16 @@ def delete_file_from_local(file_name):
     except OSError as e:
         print(f"Error deleting local file: {e}")
 
-## Read the document
-def read_doc(directory):
-    file_loader=PyPDFDirectoryLoader(directory)
-    documents=file_loader.load()
+## Load the document
+def load_doc(directory):
+    #Loading the text file data
+    loader = DirectoryLoader(directory, glob="./*.txt")
+    documents = loader.load()
     return documents
 
 ## Divide the docs into chunks
 ### https://api.python.langchain.com/en/latest/text_splitter/langchain.text_splitter.RecursiveCharacterTextSplitter.html#
-def chunk_data(docs,chunk_size=1000,chunk_overlap=100):
-    text_splitter=RecursiveCharacterTextSplitter(chunk_size=chunk_size,chunk_overlap=chunk_overlap)
+def chunk_data(docs,chunk_size=1500,chunk_overlap=200):
+    text_splitter = CharacterTextSplitter(chunk_size=chunk_size,chunk_overlap=chunk_overlap, length_function=len)
     doc=text_splitter.split_documents(docs)
     return doc
