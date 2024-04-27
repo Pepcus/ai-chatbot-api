@@ -48,7 +48,7 @@ def parse_content(content):
 
 def read_pdf_through_ocr(filelocation):
     print("====going to process file from the location ========", filelocation)
-    with open(r'Invoice_10.pdf', 'rb') as file:
+    with open(r'INV.jpg', 'rb') as file:
         binary_image_data = file.read()
         poller = document_analysis_client.begin_analyze_document(model_id, binary_image_data)
 
