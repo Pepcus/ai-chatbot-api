@@ -8,6 +8,7 @@ RUN mkdir downloads
 
 # Copy the FastAPI application code and requirements file into the container
 COPY app_langchain.py .
+COPY app_langchain_chat.py .
 COPY utils_langchain_general.py .
 COPY utils_langchain_gcp.py .
 COPY utils_langchain_pinecone.py .

@@ -21,7 +21,7 @@ def read_doc(directory):
 
 ## Divide the docs into chunks
 ### https://api.python.langchain.com/en/latest/text_splitter/langchain.text_splitter.RecursiveCharacterTextSplitter.html#
-def chunk_data(docs,chunk_size=800,chunk_overlap=50):
+def chunk_data(docs,chunk_size=1000,chunk_overlap=100):
     text_splitter=RecursiveCharacterTextSplitter(chunk_size=chunk_size,chunk_overlap=chunk_overlap)
     doc=text_splitter.split_documents(docs)
-    return docs
+    return doc

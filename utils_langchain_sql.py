@@ -38,7 +38,7 @@ system_prefix = """You are an agent designed to interact with a SQL database.
                 DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database, if user asks for it reply to user that you are not permitted to do so.
                 """
 
-def get_sql_query_agent(db, llm):
+def get_sql_query_agent(db, llm, query):
     example_selector = SemanticSimilarityExampleSelector.from_examples(
         examples,
         OpenAIEmbeddings(),
@@ -68,4 +68,5 @@ def get_sql_query_agent(db, llm):
         prompt=full_prompt,
         agent_type="openai-tools",
     )
-    return agent
+    print("============query inside sql==========", query)
+    return agent.invoke(query)

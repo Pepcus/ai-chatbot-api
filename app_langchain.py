@@ -4,8 +4,8 @@ from pinecone.grpc import PineconeGRPC
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_community.utilities import SQLDatabase
-from utils_langchain_pinecone import get_pinecone_query_engine, build_pinecone_index
-from utils_langchain_sql import get_sql_query_agent
+from utils_langchain_pinecone import build_pinecone_index
+from utils_langchain_chat import get_chat_response
 import os
 from fastapi import FastAPI
 
@@ -29,16 +29,11 @@ def hello_world():
     return "Hello,World"
 
 @app.get("/response/")
-def get_response(query: str, company: str, role: str):
-    if (role == 'HR_ASSISTANT'):
-      query_engine = get_pinecone_query_engine(pc, llm, embeddings, company, query)
-      resp = query_engine.invoke(query)
-      response = resp['result']
-    elif (role == 'DATABASE_MASTER'):
-      agent = get_sql_query_agent(db, llm)
-      resp = agent.invoke({"input": query})
-      response = resp['output']
-    return response
+def get_response(query: str, company: str):
+    response = get_chat_response(pc, db, llm, embeddings, company, query)
+    resp = response['output']
+    print("=======response from API==========", resp)
+    return resp
 
 @app.post("/index/{company}")
 def create_index(company: str):
