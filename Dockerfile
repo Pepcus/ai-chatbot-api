@@ -17,7 +17,6 @@ COPY utils_langchain_pinecone.py .
 COPY utils_langchain_sql.py .
 COPY requirements_langchain.txt .
 COPY gcp_creds.json .
-COPY INV.jpg .
 COPY .env .
 
 # Install Python dependencies
