@@ -29,7 +29,7 @@ bucket_name = os.environ['GCP_BUCKET_NAME']
 def hello_world():
     return "Hello,World"
 
-@app.get("/response/")
+@app.get("/api/response/")
 def get_response(query: str, company: str):
     response = get_chat_response(pc, db, llm, embeddings, company, query)
     return response
@@ -47,7 +47,7 @@ async def process_data(
     # Process the file, query, and company data here
     try:
         if (file):
-            file_name = str(time.time()) + file.filename
+            file_name = str(int(time.time())) + file.filename
             file_location = os.environ['LOCAL_DOWNLOAD_PATH'] + file_name
             with open(file_location, "wb") as f:
                 f.write(await file.read())

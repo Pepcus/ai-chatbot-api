@@ -12,8 +12,8 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'gcp_creds.json'
 # Function to extract text from an image using Google Cloud Vision API
 def read_document_through_google_ocr(file_location):
     client = vision.ImageAnnotatorClient()
-    with open(file_location, 'rb') as image_file:
-         content = image_file.read()
+    with open(file_location, 'rb') as file:
+         content = file.read()
     image = vision.Image(content=content)
     response = client.text_detection(image=image)
     texts = response.text_annotations
