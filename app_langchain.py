@@ -29,7 +29,7 @@ bucket_name = os.environ['GCP_BUCKET_NAME']
 def hello_world():
     return "Hello,World"
 
-@app.get("/api/response/")
+@app.get("/api/response")
 def get_response(query: str, company: str):
     response = get_chat_response(pc, db, llm, embeddings, company, query)
     return response
