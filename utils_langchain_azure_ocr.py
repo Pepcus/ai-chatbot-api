@@ -46,7 +46,7 @@ def parse_content(content):
         parsed_data[current_key] = current_value.strip()
     return parsed_data
 
-def read_pdf_through_ocr(filelocation):
+def reconcile_image_through_azure_ocr(filelocation):
     print("====going to process file from the location ========", filelocation)
     with open(r'INV.jpg', 'rb') as file:
         binary_image_data = file.read()

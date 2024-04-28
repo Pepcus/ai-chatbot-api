@@ -21,3 +21,4 @@ azure-core==1.30.1
 reportlab
 pdfrw
 google-cloud-vision
+python-multipart
