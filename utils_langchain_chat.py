@@ -2,7 +2,7 @@ import json
 from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 from utils_langchain_pinecone import get_pinecone_query_engine
-from utils_langchain_sql import get_sql_query_agent
+from utils_langchain_sql_improved import get_sql_query_agent
 from utils_langchain_azure_ocr import reconcile_image_through_azure_ocr
 from utils_langchain_google_ocr import process_document_through_google_ocr
 
@@ -119,7 +119,7 @@ def execute_function_call(pc, db, llm, embeddings, company, message):
     elif message.tool_calls[0].function.name == "get_information_from_application_database":
         query = json.loads(message.tool_calls[0].function.arguments)["query"]
         print("========Application Database Query Engine Activated=============", query)
-        results = get_sql_query_agent(db, llm, query)
+        results = get_sql_query_agent(query)
     elif  message.tool_calls[0].function.name == "reconcile_invoice_through_azure_ocr":
         file_location = json.loads(message.tool_calls[0].function.arguments)["fileLocation"]
         print("========Azure Cloud Vision Activated =============", file_location)
@@ -128,7 +128,7 @@ def execute_function_call(pc, db, llm, embeddings, company, message):
         query = json.loads(message.tool_calls[0].function.arguments)["query"]
         file_location = json.loads(message.tool_calls[0].function.arguments)["fileLocation"]
         print("========Google Cloud Vision Activated =============", query, file_location)
-        results = process_document_through_google_ocr(db, llm, query, file_location)
+        results = process_document_through_google_ocr(query, file_location)
     else:
         results = f"Error: function {message.tool_calls[0].function.name} does not exist"
     return results
