@@ -1,7 +1,7 @@
 from google.cloud import vision
 import os
 from openai import OpenAI
-from utils_langchain_sql import get_sql_query_agent
+from utils_langchain_sql_improved import get_sql_query_agent
 
 GPT_MODEL = "gpt-3.5-turbo"
 client = OpenAI()
@@ -20,8 +20,8 @@ def read_document_through_google_ocr(file_location):
     extracted_text = texts[0].description if texts else ''
     return extracted_text
 
-def process_document_through_google_ocr(db, llm, query, file_location):
+def process_document_through_google_ocr(query, file_location):
     # Extract text from the image
     extracted_text = read_document_through_google_ocr(file_location)
     query = f'''Generate and execute the SQL statement for Postgress Database based on the following information, {query}, {extracted_text}'''
-    return  get_sql_query_agent(db, llm, query)
+    return  get_sql_query_agent(query)

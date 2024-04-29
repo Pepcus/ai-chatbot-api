@@ -3,6 +3,10 @@ from langchain_community.agent_toolkits import create_sql_agent
 from langchain_community.vectorstores import FAISS
 from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_community.utilities import SQLDatabase
+import os
+
 from langchain_core.prompts import (
     ChatPromptTemplate,
     FewShotPromptTemplate,
@@ -10,6 +14,9 @@ from langchain_core.prompts import (
     PromptTemplate,
     SystemMessagePromptTemplate,
 )
+
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+db = SQLDatabase.from_uri(os.environ['PG_DB_URI'])
 
 examples = [
     {
@@ -37,35 +44,37 @@ system_prefix = """You are an agent designed to interact with a SQL database.
 
                 """
 
-def get_sql_query_agent(db, llm, query):
-    example_selector = SemanticSimilarityExampleSelector.from_examples(
+example_selector = SemanticSimilarityExampleSelector.from_examples(
         examples,
         OpenAIEmbeddings(),
         FAISS,
         k=5,
         input_keys=["input"],
     )
-    few_shot_prompt = FewShotPromptTemplate(
-        example_selector=example_selector,
-        example_prompt=PromptTemplate.from_template(
-            "User input: {input}\nSQL query: {query}"
-        ),
-        input_variables=["input", "dialect", "top_k"],
-        prefix=system_prefix,
-        suffix="",
-    )
-    full_prompt = ChatPromptTemplate.from_messages(
-        [
-            SystemMessagePromptTemplate(prompt=few_shot_prompt),
-            ("human", "{input}"),
-            MessagesPlaceholder("agent_scratchpad"),
-        ]
-    )
-    agent = create_sql_agent(
-        llm=llm,
-        db=db,
-        prompt=full_prompt,
-        agent_type="openai-tools",
-    )
+few_shot_prompt = FewShotPromptTemplate(
+    example_selector=example_selector,
+    example_prompt=PromptTemplate.from_template(
+        "User input: {input}\nSQL query: {query}"
+    ),
+    input_variables=["input", "dialect", "top_k"],
+    prefix=system_prefix,
+    suffix="",
+)
+full_prompt = ChatPromptTemplate.from_messages(
+    [
+        SystemMessagePromptTemplate(prompt=few_shot_prompt),
+        ("human", "{input}"),
+        MessagesPlaceholder("agent_scratchpad"),
+    ]
+)
+
+agent = create_sql_agent(
+    llm=llm,
+    db=db,
+    prompt=full_prompt,
+    agent_type="openai-tools",
+)
+
+def get_sql_query_agent (query):
     print("============query inside sql agent==========", query)
     return agent.invoke(query)
