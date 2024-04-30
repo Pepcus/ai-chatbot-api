@@ -11,7 +11,7 @@ from langchain.agents import Tool
 from openai import OpenAI
 from utils_langchain_preprocessing import clean_up_text
 from utils_langchain_preprocessing import extract_text_from_pdf
-from config import pinecone_client, openai_embeddings, openai_llm, gcp_bucket_name
+from app_config import pinecone_client, openai_embeddings, openai_llm, gcp_bucket_name
 import os
 
 load_dotenv()

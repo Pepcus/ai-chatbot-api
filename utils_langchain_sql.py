@@ -3,10 +3,7 @@ from langchain_community.agent_toolkits import create_sql_agent
 from langchain_community.vectorstores import FAISS
 from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 from langchain_openai import OpenAIEmbeddings
-from langchain_openai import ChatOpenAI
-from langchain_community.utilities import SQLDatabase
-from config import openai_llm, pg_database
-import os
+from app_config import openai_llm, pg_database
 
 from langchain_core.prompts import (
     ChatPromptTemplate,
