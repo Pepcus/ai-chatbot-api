@@ -3,8 +3,6 @@ from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 from utils_langchain_pinecone import get_pinecone_query_engine
 from utils_langchain_sql_improved import get_sql_query_agent
-from utils_langchain_azure_ocr import reconcile_image_through_azure_ocr
-from utils_langchain_google_ocr import process_document_through_google_ocr
 
 client = OpenAI()
 
@@ -27,8 +25,6 @@ SYSTEM_PROMPT = '''
     You are an AI-powered chatbot specialized in providing information on the HR domain.
     If the user query pertains to company, HR policies, employee handbook, or work culture, call the function `get_information_from_employee_handbook` and pass user's query without any modification to it.
     If the user query relates to data such as the number of employees, departments, or salary, employee address, designation, call the function `get_information_from_application_database` and pass user's query without any modification to it.
-    If the user asks for invoice reconciliation call the function `reconcile_invoice_through_azure_ocr`and pass filelocation without any modification to it.
-    If the user asks for processing (like inserting, updating, deleting) the document call the function `process_document_through_google_ocr`and pass user query and file object without any modification to it.
     Do not make up anything from your end.
 '''
 
@@ -46,8 +42,8 @@ tools = [
                         "description": "User's query",
                     }
                 },
-                "required": ["query"],
-            },
+                "required": ["query"]
+            }
         }
     },
     {
@@ -63,50 +59,11 @@ tools = [
                         "description": "User's query",
                     }
                 },
-                "required": ["query"],
-            },
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "reconcile_invoice_through_azure_ocr",
-            "description": "Reconcile PDF through OCR",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "fileLocation": {
-                        "type": "string",
-                        "description": "File Location",
-                    }
-                },
-                "required": ["fileLocation"],
-            },
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "process_document_through_google_ocr",
-            "description": "Process document through Google OCR",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "User's query",
-                    },
-                    "fileLocation": {
-                        "type": "string",
-                        "description": "File Location",
-                    }
-               },
-                "required": ["query"],
-            },
+                "required": ["query"]
+            }
         }
     }
 ]   
-
 
 initial_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
@@ -120,15 +77,6 @@ def execute_function_call(pc, db, llm, embeddings, company, message):
         query = json.loads(message.tool_calls[0].function.arguments)["query"]
         print("========Application Database Query Engine Activated=============", query)
         results = get_sql_query_agent(query)
-    elif  message.tool_calls[0].function.name == "reconcile_invoice_through_azure_ocr":
-        file_location = json.loads(message.tool_calls[0].function.arguments)["fileLocation"]
-        print("========Azure Cloud Vision Activated =============", file_location)
-        results = reconcile_image_through_azure_ocr(file_location)
-    elif  message.tool_calls[0].function.name == "process_document_through_google_ocr":
-        query = json.loads(message.tool_calls[0].function.arguments)["query"]
-        file_location = json.loads(message.tool_calls[0].function.arguments)["fileLocation"]
-        print("========Google Cloud Vision Activated =============", query, file_location)
-        results = process_document_through_google_ocr(query, file_location)
     else:
         results = f"Error: function {message.tool_calls[0].function.name} does not exist"
     return results
