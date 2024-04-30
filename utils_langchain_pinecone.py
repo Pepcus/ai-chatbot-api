@@ -11,17 +11,17 @@ from langchain.agents import Tool
 from openai import OpenAI
 from utils_langchain_preprocessing import clean_up_text
 from utils_langchain_preprocessing import extract_text_from_pdf
-from langchain_community.document_loaders import DirectoryLoader
+from config import pinecone_client, openai_embeddings, openai_llm, gcp_bucket_name
 import os
 
 load_dotenv()
 
-def build_pinecone_index(pc, embeddings, bucket_name, index_name):
+def build_pinecone_index(index_name):
 
     file_name = index_name + ".pdf"
     text_file_name = index_name + ".txt"
     text_file_path = os.environ['LOCAL_DOWNLOAD_PATH'] + text_file_name
-    download_file_from_gcp(bucket_name, file_name)
+    download_file_from_gcp(gcp_bucket_name, file_name)
 
     #Extract text from pdf
     extracted_text = extract_text_from_pdf(os.environ['LOCAL_DOWNLOAD_PATH']+file_name)
@@ -40,7 +40,7 @@ def build_pinecone_index(pc, embeddings, bucket_name, index_name):
     print(len(documents))
 
     index_name = index_name.swapcase()
-    pc.create_index(
+    pinecone_client.create_index(
         name=index_name,
         dimension=1536,
         metric="cosine",
@@ -51,22 +51,22 @@ def build_pinecone_index(pc, embeddings, bucket_name, index_name):
     )
 
     # Store in DB and retrieve it
-    PineconeVectorStore.from_documents(documents, embeddings, index_name=index_name)
+    PineconeVectorStore.from_documents(documents, openai_embeddings, index_name=index_name)
 
-    index = pc.Index(index_name)
+    index = pinecone_client.Index(index_name)
     index.describe_index_stats()
 
     delete_file_from_local(text_file_name)
     delete_file_from_local(file_name)
     print("====Success=======")
 
-def get_pinecone_query_engine(pc, llm, embeddings, index_name, query):
+def get_pinecone_query_engine(index_name, query):
     index_name = index_name.swapcase()
-    index = pc.Index(index_name)
+    index = pinecone_client.Index(index_name)
     text_field = "text"
 
     vectorstore = PineconeVectorStore(
-        index, embeddings, text_field
+        index, openai_embeddings, text_field
     )
 
     vectorstore.similarity_search(  
@@ -75,7 +75,7 @@ def get_pinecone_query_engine(pc, llm, embeddings, index_name, query):
     )  
    
     qa = RetrievalQA.from_chain_type(
-        llm=llm,  
+        llm=openai_llm,  
         chain_type="stuff",
         retriever=vectorstore.as_retriever()
     )
@@ -101,7 +101,7 @@ def get_pinecone_query_engine(pc, llm, embeddings, index_name, query):
     agent = initialize_agent(
         agent='chat-conversational-react-description',
         tools=tools,
-        llm=llm,
+        llm=openai_llm,
         max_iterations=3,
         early_stopping_method='generate',
         memory=conversational_memory
@@ -109,14 +109,14 @@ def get_pinecone_query_engine(pc, llm, embeddings, index_name, query):
 
     return agent.invoke(query)
 
-def get_pinecone_chat_completion_query_engine(pc, llm, embeddings, index_name, query):
+def get_pinecone_chat_completion_query_engine(index_name, query):
     client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
     res = client.embeddings.create(
         input=[query],
         model='text-embedding-3-small'
     )
     index_name = index_name.swapcase()
-    index = pc.Index(index_name)
+    index = pinecone_client.Index(index_name)
     xq = res.data[0].embedding
     res = index.query(vector=xq, top_k=10, include_metadata=True)
     contexts = [item['metadata']['text'] for item in res['matches']]

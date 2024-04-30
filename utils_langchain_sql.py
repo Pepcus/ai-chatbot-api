@@ -5,6 +5,7 @@ from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_community.utilities import SQLDatabase
+from config import openai_llm, pg_database
 import os
 
 from langchain_core.prompts import (
@@ -14,9 +15,6 @@ from langchain_core.prompts import (
     PromptTemplate,
     SystemMessagePromptTemplate,
 )
-
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-db = SQLDatabase.from_uri(os.environ['PG_DB_URI'])
 
 examples = [
     {
@@ -69,8 +67,8 @@ full_prompt = ChatPromptTemplate.from_messages(
 )
 
 agent = create_sql_agent(
-    llm=llm,
-    db=db,
+    llm=openai_llm,
+    db=pg_database,
     prompt=full_prompt,
     agent_type="openai-tools",
 )
