@@ -2,7 +2,7 @@ import json
 from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 from utils_langchain_pinecone import get_pinecone_query_engine
-from utils_langchain_sql_improved import get_sql_query_agent
+from utils_langchain_sql_improved import generate_and_execute_sql_query
 client = OpenAI()
 
 @retry(wait=wait_random_exponential(multiplier=1, max=40), stop=stop_after_attempt(3))
@@ -75,7 +75,7 @@ def execute_function_call(company, message):
     elif message.tool_calls[0].function.name == "get_information_from_application_database":
         query = json.loads(message.tool_calls[0].function.arguments)["query"]
         print("========Application Database Query Engine Activated=============", query)
-        results = get_sql_query_agent(query)
+        results = generate_and_execute_sql_query(query)
     else:
         results = f"Error: function {message.tool_calls[0].function.name} does not exist"
     return results
@@ -90,7 +90,8 @@ def get_chat_response(company, query):
     assistant_message = chat_response.choices[0].message
     print("========inside get response assistant_message=============", assistant_message)
     if assistant_message.tool_calls:
-        response = execute_function_call(company, assistant_message)
+        response = {}
+        response['output'] = execute_function_call(company, assistant_message)
     else:
         response = {}
         response['output'] =  assistant_message.content    
