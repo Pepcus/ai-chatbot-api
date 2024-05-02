@@ -22,4 +22,4 @@ pg_database = SQLDatabase.from_uri(os.environ['PG_DB_URI'])
 gcp_bucket_name = os.environ['GCP_BUCKET_NAME']
 pg_db_uri = os.environ['PG_DB_URI']
 
-SQL_PROMPT = '''Generate SQL based on the given context and user query'''
+SQL_SYSTEM_PROMPT = '''Generate SQL based on the given context and user query. Given final query to run don't give any additional suffix or prefix.'''
