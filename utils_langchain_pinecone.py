@@ -107,7 +107,7 @@ def get_pinecone_query_engine(index_name, query):
         memory=conversational_memory
     )
 
-    return agent.invoke(query)
+    return agent.invoke(query)['output']
 
 def get_pinecone_chat_completion_query_engine(index_name, query):
     client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
