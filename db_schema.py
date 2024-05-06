@@ -10,12 +10,13 @@ chat      |path         |character varying          |public      |
 chat      |id           |character varying          |public      |
 chat      |messages     |ARRAY                      |public      |
 chat      |share_path   |character varying          |public      |
-employee  |employee_id  |integer                    |public      |
+employee  |id           |integer                    |public      |
 employee  |designation  |character varying          |public      |
 employee  |email        |character varying          |public      |
 employee  |department   |character varying          |public      |
 employee  |phone_number |character varying          |public      |
 employee  |name         |character varying          |public      |
+employee  |company      |character varying          |public      |
 employee  |address      |text                       |public      |
 leave     |employee_id  |integer                    |public      |
 leave     |id           |integer                    |public      |
@@ -39,7 +40,7 @@ Table Relationship
 source_table|source_column|target_table|target_column|
 ------------+-------------+------------+-------------+
 chat        |user_id      |users       |id           |
-leave       |employee_id  |employee    |employee_id  |
-salary      |employee_id  |employee    |employee_id  |
+leave       |employee_id  |employee    |id           |
+salary      |employee_id  |employee    |id           |
 
 '''

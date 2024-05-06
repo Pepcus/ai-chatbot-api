@@ -64,7 +64,7 @@ def execute_function_call(company, message, query):
         results = get_pinecone_query_engine(company, query)
     elif message.tool_calls[0].function.name == "get_information_from_application_database":
         print("========Application Database Query Engine Activated=============", query)
-        results = generate_and_execute_sql_query(query)
+        results = generate_and_execute_sql_query(query, company)
     else:
         results = f"Error: function {message.tool_calls[0].function.name} does not exist"
     return results

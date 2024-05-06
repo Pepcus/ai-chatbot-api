@@ -3,12 +3,12 @@ from langchain_community.utilities import SQLDatabase
 from db_schema import db_schema
 
 # Create a function to generate SQL
-def generate_sql(query):
+def generate_sql(query, company):
     response = openai_client.chat.completions.create(
             model=openai_gpt_model,
             messages=[
                 {"role": "system", "content": SQL_SYSTEM_PROMPT},
-                {"role": "user", "content": "context: "+ db_schema +",   Query:" +query}
+                {"role": "user", "content": "context: "+ db_schema +", Query: " +query +",  company: "+ company}
             ]
     )
     print(response.choices[0].message.content)
@@ -19,8 +19,8 @@ def execute_query(query):
     db = SQLDatabase.from_uri(pg_db_uri)
     return db.run(query)
 
-def generate_and_execute_sql_query(query):
-    sql_query = generate_sql(query)
+def generate_and_execute_sql_query(query, company):
+    sql_query = generate_sql(query, company)
     result = execute_query(sql_query)
 
     response = openai_client.chat.completions.create(
