@@ -23,5 +23,5 @@ gcp_bucket_name = os.environ['GCP_BUCKET_NAME']
 pg_db_uri = os.environ['PG_DB_URI']
 api_client_id = os.environ['API_CLIENT_ID']
 api_client_secret = os.environ['API_CLIENT_SECRET']
-
-SQL_SYSTEM_PROMPT = '''Generate SQL based on the given context and user query. Given final query to run don't give any additional suffix or prefix.'''
+SQL_SYSTEM_PROMPT = os.environ['SQL_SYSTEM_PROMPT']
+SQL_ANSWER_PROMPT = os.environ['SQL_ANSWER_PROMPT']
