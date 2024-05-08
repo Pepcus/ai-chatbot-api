@@ -1,6 +1,9 @@
 from app_config import openai_gpt_model, openai_client, SQL_SYSTEM_PROMPT, SQL_ANSWER_PROMPT, pg_db_uri
 from langchain_community.utilities import SQLDatabase
-from db_schema import db_schema
+from utils_langchain_pinecone import get_sql_query_context
+from app_config import DB_SCHEMA, DB_SCHEMA_QUERY
+
+db_schema_context = get_sql_query_context(DB_SCHEMA, DB_SCHEMA_QUERY)
 
 # Create a function to generate SQL
 def generate_sql(query, company):
@@ -8,7 +11,7 @@ def generate_sql(query, company):
             model=openai_gpt_model,
             messages=[
                 {"role": "system", "content": SQL_SYSTEM_PROMPT},
-                {"role": "user", "content": "context: "+ db_schema +", Query: " +query +",  company: "+ company}
+                {"role": "user", "content": "context: "+ db_schema_context +", Query: " +query +",  company: "+ company}
             ]
     )
     print(response.choices[0].message.content)

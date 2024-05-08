@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Header, Query
 from typing import List, Union
 from pydantic import BaseModel
-from utils_langchain_pinecone import build_pinecone_index
+from utils_langchain_pinecone import build_pinecone_index, build_pinecone_db_schema_index
 from utils_langchain_chat import get_chat_response
 from auth import is_authorized_request
 
@@ -37,6 +37,11 @@ def get_response(
 def create_index(company: str, authorization: str = Header(None, convert_underscores=True)):
     is_authorized_request(auth=authorization)
     build_pinecone_index(company)
+
+@app.post("/api/pinecone/db_schema_index")
+def create_db_schema_index(authorization: str = Header(None, convert_underscores=True)):
+    is_authorized_request(auth=authorization)
+    build_pinecone_db_schema_index()
 
 if __name__ == '__main__':
     import uvicorn

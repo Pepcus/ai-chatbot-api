@@ -12,6 +12,9 @@ from openai import OpenAI
 from utils_langchain_preprocessing import clean_up_text
 from utils_langchain_preprocessing import extract_text_from_pdf
 from app_config import pinecone_client, openai_embeddings, openai_llm, gcp_bucket_name
+from db_schema import db_schema
+from langchain_core.documents import Document
+from app_config import DB_SCHEMA, DB_SCHEMA_QUERY
 import os
 
 load_dotenv()
@@ -59,6 +62,38 @@ def build_pinecone_index(index_name):
     delete_file_from_local(text_file_name)
     delete_file_from_local(file_name)
     print("====Success=======")
+
+def build_pinecone_db_schema_index():
+    document = [Document(page_content=db_schema, metadata={"source": DB_SCHEMA})]
+
+    pinecone_client.create_index(
+        name=DB_SCHEMA,
+        dimension=1536,
+        metric="cosine",
+        spec=ServerlessSpec(
+            cloud='aws',
+            region='us-east-1'
+        )
+    )
+
+    PineconeVectorStore.from_documents(document, openai_embeddings, index_name=DB_SCHEMA)
+
+    index = pinecone_client.Index(DB_SCHEMA)
+    index.describe_index_stats()
+
+    print("====Success=======")
+
+def get_sql_query_context(index_name, query):
+    client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+    res = client.embeddings.create(
+        input=[query],
+        model='text-embedding-3-small'
+    )
+    index = pinecone_client.Index(index_name)
+    xq = res.data[0].embedding
+    res = index.query(vector=xq, top_k=10, include_metadata=True)
+    contexts = [item['metadata']['text'] for item in res['matches']]
+    return contexts[0]
 
 def get_pinecone_query_engine(index_name, query):
     index_name = index_name.swapcase()
