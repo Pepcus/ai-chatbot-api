@@ -1,7 +1,7 @@
 from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
-from utils_langchain_pinecone import get_pinecone_query_engine
-from utils_langchain_sql_improved import generate_and_execute_sql_query
+from utils_langchain_pinecone_v1 import get_pinecone_query_engine
+from utils_langchain_sql_v2 import generate_and_execute_sql_query
 client = OpenAI()
 
 tools = [
@@ -56,11 +56,11 @@ def chat_completion_request(messages, tools=None, model='gpt-3.5-turbo'):
         print(f"Exception: {e}")
         return e
 
-def execute_function_call(company, message, query):
+def execute_function_call(company, message, query, context):
     print("========inside execute_function_call=============")
     if message.tool_calls[0].function.name == "get_information_from_employee_handbook":
         print("========Pinecone Query Engine Activated=============", query)
-        results = get_pinecone_query_engine(company, query)
+        results = get_pinecone_query_engine(company, query, context)
     elif message.tool_calls[0].function.name == "get_information_from_application_database":
         print("========Application Database Query Engine Activated=============", query)
         results = generate_and_execute_sql_query(query, company)
@@ -69,6 +69,7 @@ def execute_function_call(company, message, query):
     return results
 
 def get_chat_response(company, query, context):
+    print("=======context in get_chat_response========", context)
     chat_response = chat_completion_request(
         messages = context
         , tools=tools
@@ -76,7 +77,7 @@ def get_chat_response(company, query, context):
     assistant_message = chat_response.choices[0].message
     if assistant_message.tool_calls:
         response = {}
-        response['output'] = execute_function_call(company, assistant_message, query)
+        response['output'] = execute_function_call(company, assistant_message, query, context)
     else:
         response = {}
         response['output'] =  assistant_message.content    

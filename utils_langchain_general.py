@@ -1,13 +1,11 @@
-from dotenv import load_dotenv
 from langchain_community.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
+from app_config import local_download_path
 import os
-
-load_dotenv()
 
 def delete_file_from_local(file_name):
     try:
-        local_file_path = os.environ['LOCAL_DOWNLOAD_PATH'] + file_name
+        local_file_path = local_download_path + file_name
         os.remove(local_file_path)
         print(f"Local file {local_file_path} deleted successfully")
     except OSError as e:
