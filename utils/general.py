@@ -1,6 +1,6 @@
 from langchain_community.document_loaders import DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
-from app_config import local_download_path
+from config.config import local_download_path
 import os
 
 def delete_file_from_local(file_name):

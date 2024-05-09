@@ -1,9 +1,8 @@
 
 from fastapi import FastAPI, Header
-from typing import List, Union
 from pydantic import BaseModel
-from utils_langchain_pinecone_v1 import build_pinecone_index
-from utils_langchain_chat_v2 import get_chat_response
+from utils.pinecone import build_pinecone_index
+from utils.chat import get_chat_response
 from auth import is_authorized_request
 
 app = FastAPI()

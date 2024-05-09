@@ -2,11 +2,11 @@ from pinecone import ServerlessSpec
 from langchain.chains import RetrievalQA 
 from langchain_pinecone import PineconeVectorStore
 from pinecone import ServerlessSpec
-from utils_langchain_general import load_doc, chunk_data, delete_file_from_local
-from utils_langchain_gcp import download_file_from_gcp
-from utils_langchain_preprocessing import clean_up_text
-from utils_langchain_preprocessing import extract_text_from_pdf
-from app_config import pinecone_client, openai_embeddings, openai_llm, gcp_bucket_name, local_download_path
+from utils.general import load_doc, chunk_data, delete_file_from_local
+from utils.gcp import download_file_from_gcp
+from utils.preprocessing import clean_up_text
+from utils.preprocessing import extract_text_from_pdf
+from config.config import pinecone_client, openai_embeddings, openai_llm, gcp_bucket_name, local_download_path
 
 def build_pinecone_index(index_name):
 

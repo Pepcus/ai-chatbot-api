@@ -1,9 +1,9 @@
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain.agents import initialize_agent
 from langchain.agents import Tool
-from app_config import openai_llm
-from utils_langchain_sql_v2 import generate_and_execute_sql_query
-from utils_langchain_pinecone_v2 import get_pinecone_query_engine
+from config.config import openai_llm
+from utils.sql import generate_and_execute_sql_query
+from utils.pinecone import get_pinecone_query_engine
 from langchain.agents import initialize_agent
 
 hr_assistant_prompt = '''

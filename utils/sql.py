@@ -1,4 +1,4 @@
-from app_config import openai_gpt_model, openai_client, pg_db_uri
+from config.config import openai_gpt_model, openai_client, pg_db_uri
 from langchain_community.utilities import SQLDatabase
 from db_schema import db_schema
 

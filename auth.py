@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Header
-from app_config import api_client_id, api_client_secret
+from config.config import api_client_id, api_client_secret
 import base64
 
 def is_authorized_request(auth: str = Header(None)):

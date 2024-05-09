@@ -1,6 +1,6 @@
 from google.cloud import storage
 from google.api_core.exceptions import NotFound
-from app_config import local_download_path
+from config.config import local_download_path
 
 def download_file_from_gcp(bucket_name, file_name):
     try:
