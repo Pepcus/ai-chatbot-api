@@ -14,13 +14,15 @@ Always use polite language, friendly greetings, emojies in the 'Final Answer' ac
 Must to follow things:
 Provide only factual and accurate responses.
 
-{tools}
+
+
+{input} {tools} {agent_scratchpad}
 
 Use the following format:
 
 Question: the input question you must answer
 Thought: you should always think about what to do
-Action: the action to take, should be one of [{tool_names}]
+Action: the action to take, could be one of [{tool_names}]. You may not need to use tools for every query - the user may just want to chat!
 Action Input: the input to the action
 Observation: the result of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
@@ -39,6 +41,8 @@ Specialization: You are an AI chatbot specialized in providing information on th
 Must to follow things:
 Provide only factual and accurate responses.
 
+You may not need to use tools for every query - the user may just want to chat!
+
 {tools}
 
 Use the following format:
@@ -46,9 +50,11 @@ Use the following format:
 Question: the input question you must answer
 Thought: you should always think about what to do
 Action: the action to take, should be one of [{tool_names}]
+
 Action Input: the input to the action
 Observation: the result of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
+
 Thought: I now know the final answer
 Final Answer: the final answer to the original input question
 
@@ -80,21 +86,14 @@ tools = [
 def hr_assistant_executor():
     prompt = PromptTemplate.from_template(hr_assistant_prompt_template)
     agent = create_react_agent(openai_llm, tools, prompt)
-    return AgentExecutor(agent=agent, tools=tools)
+    return AgentExecutor(agent=agent, tools=tools, handle_parsing_errors=True, verbose=True)
 
 def hr_manager_executor():
     prompt = PromptTemplate.from_template(hr_manager_prompt_template)
     agent = create_react_agent(openai_llm, tools, prompt)
-    return AgentExecutor(agent=agent, tools=tools)
+    return AgentExecutor(agent=agent, tools=tools, handle_parsing_errors=True, verbose=True)
 
-# Dictionary to store ChatMessageHistory objects for different session_ids
-session_memories = {}
-
-# Create a function to retrieve or create ChatMessageHistory based on session_id
-def get_memory(session_id):
-    if session_id not in session_memories:
-        session_memories[session_id] = ChatMessageHistory()
-    return session_memories[session_id]
+memory = ChatMessageHistory()    
 
 # existing prompt
 def get_chat_response(chat_id, role, query):
@@ -103,14 +102,16 @@ def get_chat_response(chat_id, role, query):
     elif (role == "HR_ASSISTANT"):
         agent_executor = hr_assistant_executor()
 
+
     agent_with_chat_history = RunnableWithMessageHistory(
         agent_executor,
-        lambda session_id: get_memory(session_id),
+        lambda session_id: memory,
         input_messages_key="input",
         history_messages_key="chat_history"
     )
-
-    return agent_with_chat_history.invoke(
+    
+    response = agent_with_chat_history.invoke(
             {"input": query},
             config={"configurable": {"session_id": chat_id}}
     )
+    return response
