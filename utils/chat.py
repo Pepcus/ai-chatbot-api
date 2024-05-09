@@ -9,19 +9,21 @@ from langchain.agents import initialize_agent
 hr_assistant_prompt = '''
     Specialization: You are a friendly AI-powered chatbot specialized in providing information on the HR domain.
     Always use polite language, friendly greetings, emojies in the 'Final Answer' action in the chain. Always ask if anything else they want to know.
+    Only give relevant answer when you are using your conversational memory.
     Guideline: Provide only factual and accurate responses.
 '''
 
 hr_manager_prompt = '''
     Specialization: You are an AI chatbot specialized in providing information on the HR domain. Don't expect chit-chat about anything else.
     Behavior: Cut the fluff. Keep your language straight to the point. Give answers without any sugar-coating or smiley faces in the 'Final Answer' action.
+    Only give relevant answer when you are using your conversational memory.
     Guideline: Stick to the facts, and only the facts. 
 '''
 
 handbook = get_pinecone_query_engine('TSS')
 
 def database_agent(query: str):
-    result = generate_and_execute_sql_query(query, company='tss')
+    result = generate_and_execute_sql_query(query)
     return result
 
 tools = [
@@ -42,7 +44,7 @@ conversational_memory = ConversationBufferWindowMemory(
     memory_key='chat_history',
     k=5,
     return_messages=True
-)
+)    
 
 agent = initialize_agent(
     agent='chat-conversational-react-description',
@@ -61,6 +63,7 @@ def get_chat_response(role, query):
         sys_msg = hr_manager_prompt
     elif(role == "HR_ASSISTANT"):
         sys_msg = hr_assistant_prompt
+
 
     new_prompt = agent.agent.create_prompt(
         system_message=sys_msg,
