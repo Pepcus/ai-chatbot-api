@@ -1,6 +1,8 @@
 from config.config import openai_gpt_model, openai_client, pg_db_uri
 from langchain_community.utilities import SQLDatabase
 from db_schema import db_schema
+from utils.pinecone import get_sql_query_context
+from config.config import DB_SCHEMA, DB_SCHEMA_QUERY
 
 SQL_SYSTEM_PROMPT='''You are a postgres SQL expert. Given an input question, creat a syntactically correct postgres SQL query to run. Unless the user specifies in the question a specific number of examples to obtain, query for at most 10 results using the LIMIT clause as per {dialect}. You can order the results to return the most informative data in the database. Never query for all columns from a table. You must query only the columns that are needed to answer the question. Wrap each column name in double quotes to denote them as delimited identifiers. Pay attention to use only the column names you can see in the tables below. Be careful to not query for columns that do not exist. Also, pay attention to which column is in which table. Pay attention to use date('now') function to get the current date, if the question involves 'today'. Write an initial draft of the query. 
 
@@ -20,13 +22,15 @@ Must to follow things:
 - Always give your final response in the following format only: {query}
 '''
 
+db_schema_context = get_sql_query_context(DB_SCHEMA, DB_SCHEMA_QUERY)
+
 # Create a function to generate SQL
 def generate_sql(query):
     response = openai_client.chat.completions.create(
             model=openai_gpt_model,
             messages=[
                 {"role": "system", "content": SQL_SYSTEM_PROMPT},
-                {"role": "user", "content": "context: "+ db_schema +", Query: " + query}
+                {"role": "user", "content": "context: "+ db_schema_context +", Query: " + query}
             ]
     )
     print(response.choices[0].message.content)
