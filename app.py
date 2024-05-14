@@ -16,9 +16,9 @@ def hello_world():
     return "Hello,World"
 
 @app.get("/api/response")
-def get_response(query: str, role: str, chat_id: str, authorization: str = Header(None, convert_underscores=True)):
+def get_response(query: str, company: str, chat_id: str, authorization: str = Header(None, convert_underscores=True)):
     is_authorized_request(auth=authorization)
-    response = get_chat_response(chat_id, role, query)
+    response = get_chat_response(chat_id, company, query)
     return response
 
 @app.post("/api/pinecone/index/{company}")
