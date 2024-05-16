@@ -1,33 +1,23 @@
 from pinecone import ServerlessSpec
-from langchain.chains import RetrievalQA 
 from langchain_pinecone import PineconeVectorStore
 from pinecone import ServerlessSpec
 from utils.general import load_doc, chunk_data, delete_file_from_local
 from utils.gcp import download_file_from_gcp
 from utils.preprocessing import clean_up_text
 from utils.preprocessing import extract_text_from_pdf
-from config.config import pinecone_client, openai_client, openai_embeddings, openai_llm, gcp_bucket_name, local_download_path, DB_SCHEMA, DB_SCHEMA_QUERY
+from config.config import pinecone_client, openai_client, openai_embeddings, openai_llm, gcp_bucket_name, local_download_path, DB_SCHEMA
 from db_schema import db_schema
 from langchain_core.documents import Document
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.chains import create_retrieval_chain
 
 def build_pinecone_index(index_name):
 
     file_name = index_name + ".pdf"
-    text_file_name = index_name + ".txt"
-    text_file_path = local_download_path + text_file_name
     download_file_from_gcp(gcp_bucket_name, file_name)
 
-    #Extract text from pdf
-    extracted_text = extract_text_from_pdf(local_download_path+file_name)
-
-    #PreProcessing 1 - Cleaning up the extracted_text data
-    cleaned_data = clean_up_text(extracted_text)
-
-    #Writing the cleaned extracted_text data into a text file
-    with open(text_file_path, "w", encoding = 'utf-8') as f:
-        f.write(cleaned_data)
-
-    docs=load_doc(local_download_path)
+    docs=load_doc(local_download_path + file_name)
     print(len(docs))
 
     documents=chunk_data(docs=docs)
@@ -50,25 +40,36 @@ def build_pinecone_index(index_name):
     index = pinecone_client.Index(index_name)
     index.describe_index_stats()
 
-    delete_file_from_local(text_file_name)
     delete_file_from_local(file_name)
     print("====Success=======")
 
 def get_pinecone_query_engine(index_name):
-    index_name = index_name.swapcase()
-    index = pinecone_client.Index(index_name)
+    system_prompt = (
+        "You are an assistant for question-answering tasks. "
+        "Use the following pieces of retrieved context to answer "
+        "the question. If you don't know the answer, say that you "
+        "don't know."
+        "\n\n"
+        "{context}"
+    )
+
+    assistant_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", system_prompt),
+            ("human", "{input}"),
+        ]
+    )
+
+    question_answer_chain = create_stuff_documents_chain(openai_llm, assistant_prompt)
+    index = pinecone_client.Index(index_name.swapcase())
     text_field = "text"
 
     vectorstore = PineconeVectorStore(
         index, openai_embeddings, text_field
     )
-    qa = RetrievalQA.from_chain_type(
-        llm=openai_llm,  
-        chain_type="stuff",
-        retriever=vectorstore.as_retriever()
-    )
 
-    return qa
+    return create_retrieval_chain(vectorstore.as_retriever(), question_answer_chain)
+
 
 def build_pinecone_db_schema_index():
     document = [Document(page_content=db_schema, metadata={"source": DB_SCHEMA})]
@@ -84,7 +85,6 @@ def build_pinecone_db_schema_index():
     )
 
     PineconeVectorStore.from_documents(document, openai_embeddings, index_name=DB_SCHEMA)
-
     index = pinecone_client.Index(DB_SCHEMA)
     index.describe_index_stats()
 

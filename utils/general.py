@@ -1,5 +1,5 @@
-from langchain_community.document_loaders import DirectoryLoader
-from langchain.text_splitter import CharacterTextSplitter
+from langchain_community.document_loaders.pdf import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from config.config import local_download_path
 import os
 
@@ -14,13 +14,13 @@ def delete_file_from_local(file_name):
 ## Load the document
 def load_doc(directory):
     #Loading the text file data
-    loader = DirectoryLoader(directory, glob="./*.txt")
+    loader = PyPDFLoader(directory)
     documents = loader.load()
     return documents
 
 ## Divide the docs into chunks
 ### https://api.python.langchain.com/en/latest/text_splitter/langchain.text_splitter.RecursiveCharacterTextSplitter.html#
 def chunk_data(docs,chunk_size=1500,chunk_overlap=200):
-    text_splitter = CharacterTextSplitter(chunk_size=chunk_size,chunk_overlap=chunk_overlap, length_function=len)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size,chunk_overlap=chunk_overlap, length_function=len)
     doc=text_splitter.split_documents(docs)
     return doc
