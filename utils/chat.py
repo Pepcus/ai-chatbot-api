@@ -37,6 +37,10 @@ def friendly_agent():
 
     Remember, you must return both an answer and citations. A citation consists of a VERBATIM quote that  justifies the answer and the ID of the quote article. Return a citation for every quote across all articles that justify the answer. 
 
+    If user says thank you or concluding the conversation, tell him if he wants further information he can refer to the handbook available here:
+
+    https://storage.googleapis.com/pep-handbooks/{company}.pdf
+
     Strictly use the following format for your final output:
 
     Answer: <answer>
@@ -62,6 +66,10 @@ def serious_agent():
     Ensure to pass user's input without any modification to the tool you are using.
 
     Remember, you must return both an answer and citations. A citation consists of a VERBATIM quote that  justifies the answer and the ID of the quote article. Return a citation for every quote across all articles that justify the answer. 
+
+    If user says thank you or concluding the conversation, tell him if he wants further information he can refer to the handbook available here:
+
+    https://storage.googleapis.com/pep-handbooks/{company}.pdf
 
     Strictly use the following format for your final output:
 
