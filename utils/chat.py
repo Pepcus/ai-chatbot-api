@@ -37,7 +37,7 @@ def friendly_agent():
 
     Remember, you must return both an answer and citations. A citation consists of a VERBATIM quote that  justifies the answer and the ID of the quote article. Return a citation for every quote across all articles that justify the answer. 
 
-    Use the following format for your final output:
+    Strictly use the following format for your final output:
 
     Answer: <answer>
     Source: <source>
@@ -65,8 +65,8 @@ def serious_agent():
 
     Strictly use the following format for your final output:
 
-    **Answer**  : <answer>\n\n
-    **Source**  : <source>
+    Answer  : <answer>
+    Source  : <source>
     '''
 
     agent_prompt = ChatPromptTemplate.from_messages([
