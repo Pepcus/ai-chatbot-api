@@ -12,7 +12,6 @@ RUN mkdir utils
 COPY app.py .
 COPY auth.py .
 COPY config/config.py config/config.py 
-COPY db_schema.py .
 COPY utils/preprocessing.py utils/preprocessing.py
 COPY utils/chat.py utils/chat.py
 COPY utils/general.py utils/general.py 

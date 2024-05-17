@@ -4,9 +4,7 @@ from utils.general import load_doc, chunk_data, delete_file_from_local
 from utils.gcp import download_file_from_gcp
 from utils.preprocessing import clean_up_text
 from utils.preprocessing import extract_text_from_pdf
-from config.config import pinecone_client, openai_client, openai_embeddings, openai_llm, gcp_bucket_name, local_download_path, DB_SCHEMA
-from db_schema import db_schema
-from langchain_core.documents import Document
+from config.config import pinecone_client, openai_embeddings, openai_llm, gcp_bucket_name, local_download_path
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
