@@ -68,23 +68,3 @@ def get_pinecone_query_engine(index_name):
     )
 
     return create_retrieval_chain(vectorstore.as_retriever(), question_answer_chain)
-
-
-def build_pinecone_db_schema_index():
-    document = [Document(page_content=db_schema, metadata={"source": DB_SCHEMA})]
-
-    pinecone_client.create_index(
-        name=DB_SCHEMA,
-        dimension=1536,
-        metric="cosine",
-        spec=ServerlessSpec(
-            cloud='aws',
-            region='us-east-1'
-        )
-    )
-
-    PineconeVectorStore.from_documents(document, openai_embeddings, index_name=DB_SCHEMA)
-    index = pinecone_client.Index(DB_SCHEMA)
-    index.describe_index_stats()
-
-    print("====Success=======")
