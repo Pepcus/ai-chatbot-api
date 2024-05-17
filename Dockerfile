@@ -18,7 +18,6 @@ COPY utils/chat.py utils/chat.py
 COPY utils/general.py utils/general.py 
 COPY utils/gcp.py utils/gcp.py
 COPY utils/pinecone_vectorstore.py utils/pinecone_vectorstore.py
-COPY utils/sql.py utils/sql.py
 COPY requirements.txt .
 COPY config/gcp_creds.json config/gcp_creds.json
 COPY test.py .
