@@ -21,6 +21,7 @@ COPY utils/pinecone.py utils/pinecone.py
 COPY utils/sql.py utils/sql.py
 COPY requirements.txt .
 COPY config/gcp_creds.json config/gcp_creds.json
+COPY test.py .
 COPY .env .
 
 # Install Python dependencies
