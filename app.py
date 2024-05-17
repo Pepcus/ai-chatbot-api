@@ -1,7 +1,7 @@
 
 from fastapi import FastAPI, Header
 from pydantic import BaseModel
-from utils.pinecone import build_pinecone_index, build_pinecone_db_schema_index
+from utils.pinecone_vectorstore import build_pinecone_index, build_pinecone_db_schema_index
 from utils.chat import get_chat_response
 from auth import is_authorized_request
 

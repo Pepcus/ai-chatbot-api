@@ -27,9 +27,6 @@ def extract_text_from_pdf(file_path):
       print(f"Error: File not found at {file_path}")
       return ""
 
-
-
-
 def clean_up_text(content: str) -> str:
     """
     Remove unwanted characters and patterns in text input.
@@ -59,8 +56,3 @@ def clean_up_text(content: str) -> str:
     content = content.lower()
 
     return content
-
-
-
-
-

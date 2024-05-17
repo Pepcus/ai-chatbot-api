@@ -3,8 +3,7 @@ from langchain.memory import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import tool
 from config.config import openai_llm
-from utils.sql import generate_and_execute_sql_query
-from utils.pinecone import get_pinecone_query_engine
+from utils.pinecone_vectorstore import get_pinecone_query_engine
 from langchain_core.prompts import ChatPromptTemplate
 
 @tool
@@ -15,13 +14,7 @@ def handbook(input: str, company: str) -> {}: # type: ignore
     metadata_values = [doc.metadata['page'] for doc in result['context']]
     return {"answer" : result['answer'], "source" : "Employee Handbook Page Number " + str(metadata_values[0])}
 
-@tool
-def database(query: str, company: str) -> {}: # type: ignore
-    '''Useful for answering questions related to real time data like number of employees, salaries, departments etc. First generate the query and then execute it.'''
-    result = generate_and_execute_sql_query(query, company)
-    return {"answer" : result, "source" : "Database"}
-
-tools = [handbook, database]
+tools = [handbook]
 
 def friendly_agent():
     system_prompt = ''' 
