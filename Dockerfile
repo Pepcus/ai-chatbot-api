@@ -19,7 +19,7 @@ COPY utils/gcp.py utils/gcp.py
 COPY utils/pinecone_vectorstore.py utils/pinecone_vectorstore.py
 COPY requirements.txt .
 COPY config/gcp_creds.json config/gcp_creds.json
-COPY test.py .
+COPY automated_unittest.py .
 COPY .env .
 
 # Install Python dependencies
