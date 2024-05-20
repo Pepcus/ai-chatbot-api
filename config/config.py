@@ -1,5 +1,5 @@
 from langchain_openai import OpenAIEmbeddings
-from pinecone.grpc import PineconeGRPC
+from pinecone import Pinecone
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from openai import OpenAI
@@ -11,7 +11,7 @@ openai_api_key = os.environ['OPENAI_API_KEY']
 openai_gpt_model = 'gpt-3.5-turbo'
 openai_client = OpenAI()
 openai_embeddings = OpenAIEmbeddings(api_key=os.environ['OPENAI_API_KEY'])
-pinecone_client = PineconeGRPC(api_key=os.environ['PINECONE_API_KEY'])
+pinecone_client = Pinecone(api_key=os.environ['PINECONE_API_KEY'])
 openai_llm = ChatOpenAI(  
         openai_api_key=os.environ['OPENAI_API_KEY'],
         model_name='gpt-3.5-turbo',  

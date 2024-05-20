@@ -1,5 +1,5 @@
 from pinecone import ServerlessSpec
-from langchain_pinecone import PineconeVectorStore
+from langchain_pinecone import Pinecone
 from utils.general import load_doc, chunk_data, delete_file_from_local
 from utils.gcp import download_file_from_gcp
 from utils.preprocessing import clean_up_text
@@ -32,7 +32,7 @@ def build_pinecone_index(index_name):
     )
 
     # Store in DB and retrieve it
-    PineconeVectorStore.from_documents(documents, openai_embeddings, index_name=index_name)
+    Pinecone.from_documents(documents, openai_embeddings, index_name=index_name)
 
     index = pinecone_client.Index(index_name)
     index.describe_index_stats()
@@ -61,7 +61,7 @@ def get_pinecone_query_engine(index_name):
     index = pinecone_client.Index(index_name.swapcase())
     text_field = "text"
 
-    vectorstore = PineconeVectorStore(
+    vectorstore = Pinecone(
         index, openai_embeddings, text_field
     )
 
