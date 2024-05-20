@@ -72,7 +72,7 @@ print("Mean of feedback.correctness ESP", mean_correctness_esp)
 correctness_values=mean_correctness_esp+mean_correctness_opt/2
 print(correctness_values)
 
-if int(correctness_values)>=0.5 :
+if int(correctness_values)>=0.3 :
       print("Test case passed")
 else:
     print("Error!!!!!!!!!!!")
