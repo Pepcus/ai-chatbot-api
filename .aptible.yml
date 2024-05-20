@@ -1,2 +1,2 @@
 before_release:
-  - python /app/automate_unittest.py
+  - python automate_unittest.py
