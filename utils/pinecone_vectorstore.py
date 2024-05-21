@@ -8,7 +8,7 @@ from config.config import pinecone_client, openai_embeddings, openai_llm, gcp_bu
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
-from utils.logger import logger
+from utils.logs import logger
 
 def build_pinecone_index(index_name):
 

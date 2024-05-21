@@ -1,4 +1,4 @@
-from utils.logger import logger
+from utils.logs import logger
 from langsmith import Client
 from langchain.smith import RunEvalConfig, run_on_dataset
 from langchain.agents import AgentExecutor

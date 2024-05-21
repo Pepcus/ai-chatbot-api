@@ -5,7 +5,7 @@ from langchain_core.tools import tool
 from config.config import openai_llm
 from utils.pinecone_vectorstore import get_pinecone_query_engine
 from langchain_core.prompts import ChatPromptTemplate
-from utils.logger import logger
+from utils.logs import logger
 
 @tool
 def handbook(input: str, company: str) -> {}: # type: ignore

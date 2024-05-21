@@ -1,6 +1,6 @@
 import re
 from PyPDF2 import PdfReader
-from utils.logger import logger
+from utils.logs import logger
 
 def extract_text_from_pdf(file_path):
   """
