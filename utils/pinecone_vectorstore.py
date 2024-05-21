@@ -8,6 +8,7 @@ from config.config import pinecone_client, openai_embeddings, openai_llm, gcp_bu
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
+from utils.logger import logger
 
 def build_pinecone_index(index_name):
 
@@ -38,7 +39,7 @@ def build_pinecone_index(index_name):
     index.describe_index_stats()
 
     delete_file_from_local(file_name)
-    print("====Success=======")
+    logger.info("====Success=======")
 
 def get_pinecone_query_engine(index_name):
     system_prompt = (

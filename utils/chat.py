@@ -5,6 +5,7 @@ from langchain_core.tools import tool
 from config.config import openai_llm
 from utils.pinecone_vectorstore import get_pinecone_query_engine
 from langchain_core.prompts import ChatPromptTemplate
+from utils.logger import logger
 
 @tool
 def handbook(input: str, company: str) -> {}: # type: ignore
@@ -136,5 +137,5 @@ def get_chat_response(chat_id, company, query):
             {"input": query, "company": company},
             config={"configurable": {"session_id": chat_id}}
     )
-    print("===========", response)
+    logger.info("response===="+str(response))
     return response['output']

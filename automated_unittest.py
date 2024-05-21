@@ -1,4 +1,4 @@
-import sys
+from utils.logger import logger
 from langsmith import Client
 from langchain.smith import RunEvalConfig, run_on_dataset
 from langchain.agents import AgentExecutor
@@ -65,17 +65,17 @@ df_opt= pd.read_csv('result_opt.csv')
 
 mean_correctness_opt = df_opt['feedback.correctness'].mean()
 
-print("Mean of feedback.correctness OPT:", mean_correctness_opt)
+logger.info("Mean of feedback.correctness OPT:", str(mean_correctness_opt))
 
-print("Mean of feedback.correctness ESP", mean_correctness_esp)
+logger.info("Mean of feedback.correctness ESP", str(mean_correctness_esp))
 
 correctness_values=mean_correctness_esp+mean_correctness_opt/2
 print(correctness_values)
 
 if int(correctness_values)>=0.5 :
-      print("Test case passed")
+      logger.info("Test case passed")
 else:
-    print("Error!!!!!!!!!!!")
+    logger.info("Error!!!!!!!!!!!")
     ##raise ValueError("Please review the Code ! Test cases are failed")
     
 

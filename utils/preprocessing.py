@@ -1,5 +1,6 @@
 import re
 from PyPDF2 import PdfReader
+from utils.logger import logger
 
 def extract_text_from_pdf(file_path):
   """
@@ -12,7 +13,7 @@ def extract_text_from_pdf(file_path):
       str: The extracted text from the PDF file.
   """
 
-  print("Extracting text from pdf...")
+  logger.info("Extracting text from pdf...")
   try:
     with open(file_path, 'rb') as pdf_file:
       reader = PdfReader(pdf_file)
@@ -35,7 +36,7 @@ def clean_up_text(content: str) -> str:
     
     :return: Cleaned version of original text input.
     """
-    print("Data cleaning...")
+    logger.info("Data cleaning...")
 
     # Fix hyphenated words broken by newline
     content = re.sub(r'(\w+)-\n(\w+)', r'\1\2', content)
