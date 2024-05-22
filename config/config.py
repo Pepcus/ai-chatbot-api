@@ -1,3 +1,11 @@
+"""
+Filename: config.py
+Author: Deepak Nigam
+Date created: 2024-04-28
+License: MIT License
+Description: This file contains application configuration.
+"""
+
 from langchain_openai import OpenAIEmbeddings
 from pinecone import Pinecone
 from dotenv import load_dotenv

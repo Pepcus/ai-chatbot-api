@@ -1,3 +1,10 @@
+"""
+Filename: app.py
+Author: Deepak Nigam
+Date created: 2024-04-28
+License: MIT License
+Description: Entry point of the app, contains API implementation.
+"""
 
 from fastapi import FastAPI, Header
 from pydantic import BaseModel

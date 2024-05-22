@@ -1,3 +1,11 @@
+"""
+Filename: pinecone_vectorstore.py
+Author: Deepak Nigam
+Date created: 2024-04-28
+License: MIT License
+Description: This file contains utility functions related to Pinecone vector database.
+"""
+
 from pinecone import ServerlessSpec
 from langchain_pinecone import Pinecone
 from utils.general import load_doc, chunk_data, delete_file_from_local

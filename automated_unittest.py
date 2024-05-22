@@ -1,3 +1,11 @@
+"""
+Filename: automated_unittest.py
+Author: Aditya Tripathi
+Date created: 2024-04-28
+License: MIT License
+Description: This file contains unit test functions.
+"""
+
 from utils.logs import logger
 from langsmith import Client
 from langchain.smith import RunEvalConfig, run_on_dataset

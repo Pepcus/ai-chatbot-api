@@ -1,3 +1,11 @@
+"""
+Filename: preprocessing.py
+Author: Ashish Sharma
+Date created: 2024-04-28
+License: MIT License
+Description: This file contains utility functions related to preprocessing of data.
+"""
+
 import re
 from PyPDF2 import PdfReader
 from utils.logs import logger

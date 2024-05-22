@@ -1,3 +1,11 @@
+"""
+Filename: auth.py
+Author: Deepak Nigam
+Date created: 2024-04-28
+License: MIT License
+Description: Contains functions related to authorization/authentication of the request.
+"""
+
 from fastapi import HTTPException, Header
 from config.config import api_client_id, api_client_secret
 import base64

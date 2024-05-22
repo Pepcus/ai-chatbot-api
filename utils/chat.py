@@ -1,3 +1,11 @@
+"""
+Filename: chay.py
+Author: Deepak Nigam
+Date created: 2024-04-28
+License: MIT License
+Description: This file contains functions used by the chatbot for the answering users questions.
+"""
+
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain.memory import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory

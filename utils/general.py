@@ -1,3 +1,11 @@
+"""
+Filename: general.py
+Author: Deepak Nigam
+Date created: 2024-04-28
+License: MIT License
+Description: This file contains generic functions.
+"""
+
 from langchain_community.document_loaders.pdf import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from config.config import local_download_path

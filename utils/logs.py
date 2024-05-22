@@ -1,3 +1,11 @@
+"""
+Filename: logs.py
+Author: Deepak Nigam
+Date created: 2024-04-28
+License: MIT License
+Description: Logging utility functions.
+"""
+
 import logging
 
 # Configure logging to print logs to console
