@@ -121,21 +121,25 @@ def serious_agent():
 memory = ChatMessageHistory()
 
 def get_chat_response(chat_id, company, query):
-    if (company == "OPT"):
-        agent = serious_agent()
-    elif (company == "ESP"):
-        agent = friendly_agent()
-    
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    agent_with_chat_history = RunnableWithMessageHistory(
-        agent_executor,
-        lambda session_id: memory,
-        input_messages_key="input",
-        history_messages_key="chat_history"
-    )
-    response = agent_with_chat_history.invoke(
-            {"input": query, "company": company},
-            config={"configurable": {"session_id": chat_id}}
-    )
-    logger.info("response===="+str(response))
-    return response['output']
+    try:
+        if (company == "OPT"):
+            agent = serious_agent()
+        elif (company == "ESP"):
+            agent = friendly_agent()
+        
+        agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+        agent_with_chat_history = RunnableWithMessageHistory(
+            agent_executor,
+            lambda session_id: memory,
+            input_messages_key="input",
+            history_messages_key="chat_history"
+        )
+        response = agent_with_chat_history.invoke(
+                {"input": query, "company": company},
+                config={"configurable": {"session_id": chat_id}}
+        )
+        logger.info("response===="+str(response))
+        return response['output']
+    except Exception as e:
+        logger.error(f"An error occurred while getting chat response: {e}")
+        return None

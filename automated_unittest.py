@@ -70,7 +70,7 @@ logger.info("Mean of feedback.correctness OPT:", str(mean_correctness_opt))
 logger.info("Mean of feedback.correctness ESP", str(mean_correctness_esp))
 
 correctness_values=mean_correctness_esp+mean_correctness_opt/2
-print(correctness_values)
+logger.info(correctness_values)
 
 if int(correctness_values)>=0.5 :
       logger.info("Test case passed")

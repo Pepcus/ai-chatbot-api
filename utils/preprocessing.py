@@ -25,7 +25,7 @@ def extract_text_from_pdf(file_path):
 
       return extracted_text
   except FileNotFoundError:
-      print(f"Error: File not found at {file_path}")
+      logger.error(f"Error: File not found at {file_path}")
       return ""
 
 def clean_up_text(content: str) -> str:
@@ -36,24 +36,28 @@ def clean_up_text(content: str) -> str:
     
     :return: Cleaned version of original text input.
     """
-    logger.info("Data cleaning...")
+    try:
+        logger.info("Data cleaning...")
 
-    # Fix hyphenated words broken by newline
-    content = re.sub(r'(\w+)-\n(\w+)', r'\1\2', content)
+        # Fix hyphenated words broken by newline
+        content = re.sub(r'(\w+)-\n(\w+)', r'\1\2', content)
 
-    # Remove specific unwanted patterns and characters
-    unwanted_patterns = [
-        "\\n", "  —", "——————————", "—————————", "—————",
-        r'\\u[\dA-Fa-f]{4}', r'\uf075', r'\uf0b7',
-        r'\.{2,}'
-    ]
-    for pattern in unwanted_patterns:
-        content = re.sub(pattern, "", content)
+        # Remove specific unwanted patterns and characters
+        unwanted_patterns = [
+            "\\n", "  —", "——————————", "—————————", "—————",
+            r'\\u[\dA-Fa-f]{4}', r'\uf075', r'\uf0b7',
+            r'\.{2,}'
+        ]
+        for pattern in unwanted_patterns:
+            content = re.sub(pattern, "", content)
 
-    # Fix improperly spaced hyphenated words and normalize whitespace
-    content = re.sub(r'(\w)\s*-\s*(\w)', r'\1-\2', content)
-    content = re.sub(r'\s+', ' ', content)
+        # Fix improperly spaced hyphenated words and normalize whitespace
+        content = re.sub(r'(\w)\s*-\s*(\w)', r'\1-\2', content)
+        content = re.sub(r'\s+', ' ', content)
 
-    content = content.lower()
+        content = content.lower()
 
-    return content
+        return content
+    except Exception as e:
+        logger.error(f"An error occurred during data cleaning: {e}")
+        return None
