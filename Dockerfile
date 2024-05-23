@@ -11,13 +11,8 @@ RUN mkdir utils
 # Copy the FastAPI application code and requirements file into the container
 COPY app.py .
 COPY auth.py .
-COPY config/config.py config/config.py 
-COPY utils/preprocessing.py utils/preprocessing.py
-COPY utils/chat.py utils/chat.py
-COPY utils/general.py utils/general.py 
-COPY utils/gcp.py utils/gcp.py
-COPY utils/pinecone_vectorstore.py utils/pinecone_vectorstore.py
-COPY utils/logs.py utils/logs.py
+COPY config config
+COPY utils utils
 COPY requirements.txt .
 COPY automated_unittest.py .
 
