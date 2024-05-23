@@ -21,7 +21,6 @@ COPY utils/logs.py utils/logs.py
 COPY requirements.txt .
 COPY config/gcp_creds.json config/gcp_creds.json
 COPY automated_unittest.py .
-COPY .env .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
