@@ -14,21 +14,19 @@ from openai import OpenAI
 import os
 import json
 import tempfile
-import ast
 
 load_dotenv()
-
+gcp_bucket_name = os.environ['GCP_BUCKET_NAME']
 openai_api_key = os.environ['OPENAI_API_KEY']
 openai_gpt_model = 'gpt-3.5-turbo'
 openai_client = OpenAI()
-openai_embeddings = OpenAIEmbeddings(api_key=os.environ['OPENAI_API_KEY'])
+openai_embeddings = OpenAIEmbeddings(api_key=openai_api_key)
 pinecone_client = Pinecone(api_key=os.environ['PINECONE_API_KEY'])
 openai_llm = ChatOpenAI(  
-        openai_api_key=os.environ['OPENAI_API_KEY'],
+        openai_api_key=openai_api_key,
         model_name='gpt-3.5-turbo',  
         temperature=0.0  
     )
-gcp_bucket_name = os.environ['GCP_BUCKET_NAME']
 api_client_id = os.environ['API_CLIENT_ID']
 api_client_secret = os.environ['API_CLIENT_SECRET']
 local_download_path = os.environ['LOCAL_DOWNLOAD_PATH']

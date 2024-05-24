@@ -13,5 +13,4 @@ langchain-pinecone
 langchain-community
 langchain-openai
 langchainhub
-pinecone-client[grpc]==3.0.0
 google-cloud-storage
