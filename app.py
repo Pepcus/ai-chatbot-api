@@ -24,7 +24,6 @@ def hello_world():
 
 @app.get("/api/response")
 def get_response(query: str, company: str, chat_id: str, authorization: str = Header(None, convert_underscores=True)):
-    print("=======inside get_response===========")
     is_authorized_request(auth=authorization)
     response = get_chat_response(chat_id, company, query)
     return response
