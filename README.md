@@ -12,9 +12,9 @@ The AI-powered chatbot developed for HR management in a company of approximately
 
 **Offering of HR Chatbot:**
 HR Policy Question Answering:
-What It Does: Allows the chatbot to retrieve and provide answers from policy documents such as employee handbooks..
+What It Does: Allows the chatbot to retrieve and provide answers from policy documents such as HR Policies..
 How It Helps: Employees can get quick answers to questions about company policies or procedures without reading through entire documents.
-Example: An employee asks, "What is the company's policy on remote work or flexible working hours?" The chatbot scans the employee handbook and responds accordingly.
+Example: An employee asks, "What is the company's policy on remote work or flexible working hours?" The chatbot scans the HR Policy and responds accordingly.
 
 **System Architecture**
 Overview of the System Design
