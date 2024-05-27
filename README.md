@@ -126,6 +126,8 @@ HR Policy Question Answering: TruLens provided detailed programmatic feedback on
 **Prerequisits:**
 1. Python 3.10.14.
 2. pip 24.0
+3. Google Cloud Storage credentials (for uploading and downloading reference data files for embeddings)
+4. Vercel account with postgres database (if you don't want to use local postgres DB)
 
 **Installation Steps:**
 1. Clone the repository from: https://github.com/Pepcus/ai-chatbot-api
