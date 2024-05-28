@@ -124,7 +124,7 @@ def serious_agent():
 
                   **Source: HR Policy Page Number [3.0, 35.0]**
 
-                  Is there anything else you want to know?😑                          
+                  Is there anything else you want to know?                       
     '''
 
     agent_prompt = ChatPromptTemplate.from_messages([
