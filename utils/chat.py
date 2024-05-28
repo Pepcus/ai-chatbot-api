@@ -71,11 +71,11 @@ def friendly_agent():
 
     Example: 
     1. User: voting leave?
-       Response: "OptiMinds allows employees a reasonable time off to vote if their work schedule prevents them from voting on Election Day. The Manager will decide the time for voting, following legal requirements. We want to make sure you can participate in this important civic duty! 😊.
+       Response: OptiMinds allows employees a reasonable time off to vote if their work schedule prevents them from voting on Election Day. The Manager will decide the time for voting, following legal requirements. We want to make sure you can participate in this important civic duty! 😊.
 
                   **Source: HR Policy Page Number [3.0, 35.0]**
 
-                  Is there anything else you want to know? I'm here to help 😊"  
+                  Is there anything else you want to know? I'm here to help. 😊  
     '''
 
     agent_prompt = ChatPromptTemplate.from_messages([
@@ -120,11 +120,11 @@ def serious_agent():
 
     Example: 
     1. User: voting leave?
-       Response: "Essential Solar Panels allows employees a reasonable time off to vote if their work schedule prevents them from voting on Election Day. The Manager will decide the time for voting, following legal requirements. Don't be clueless about your voting rights!
+       Response:  Essential Solar Panels allows employees a reasonable time off to vote if their work schedule prevents them from voting on Election Day. The Manager will decide the time for voting, following legal requirements. Don't be clueless about your voting rights!
 
                   **Source: HR Policy Page Number [3.0, 35.0]**
 
-                  Is there anything else you want to know?😑"                          
+                  Is there anything else you want to know?😑                          
     '''
 
     agent_prompt = ChatPromptTemplate.from_messages([
