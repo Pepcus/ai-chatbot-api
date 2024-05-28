@@ -16,15 +16,24 @@ from langchain_core.prompts import ChatPromptTemplate
 from utils.logs import logger
 
 @tool
-def hr_policy(input: str, company: str) -> {}: # type: ignore
-    '''Useful for answering queries related to HR Policies, company policies, employee benefits etc.'''
-    rag_chain = get_pinecone_query_engine(company)
+def hr_policy_opt(input: str, company: str) -> {}: # type: ignore
+    '''Useful for answering queries related to HR Policies, company policies, employee benefits etc. for the company OPT or Optiminds'''
+    rag_chain = get_pinecone_query_engine('OPT')
     result = rag_chain.invoke({"input": input})
     metadata_values = list(set([doc.metadata['page'] for doc in result['context']]))[:2]
     sorted_modified_elements = sorted(map(lambda x: x + 1, metadata_values))
     return {"answer" : result['answer'], "source" : "HR Policy Page Number " + str(sorted_modified_elements)}
 
-tools = [hr_policy]
+@tool
+def hr_policy_esp(input: str, company: str) -> {}: # type: ignore
+    '''Useful for answering queries related to HR Policies, company policies, employee benefits etc. for the company ESP or Essential Solar Panel'''
+    rag_chain = get_pinecone_query_engine('ESP')
+    result = rag_chain.invoke({"input": input})
+    metadata_values = list(set([doc.metadata['page'] for doc in result['context']]))[:2]
+    sorted_modified_elements = sorted(map(lambda x: x + 1, metadata_values))
+    return {"answer" : result['answer'], "source" : "HR Policy Page Number " + str(sorted_modified_elements)}
+
+tools = [hr_policy_opt, hr_policy_esp]
 
 def friendly_agent():
     system_prompt = ''' 
@@ -35,9 +44,10 @@ def friendly_agent():
     2. **Friendly Greetings**: Use friendly, welcoming and encouraging greetings and happy face emojis 😊 in your responses.
     3. **Consistent Vocabulary**: Always incorporate 'friendly, welcoming and encouraging' listed below in your responses to maintain a consistent friendly personality.
     4. **Helpfulness**: Always ask if there is anything else the user wants to know in a friendly, welcoming and encouraging.
-    5. **Tool Usage**: Always use the given tools to answer user's question, ensure to use the abbrevation of the company name like ESP, OTP, do not pass the full name of the company. Also do not make any changes in the user query.
-    6. **Irrelevant Questions**: This is very important, if user asks any question which is not related to HR domain, inform him that you are an HR bot and can't answers such questions.
-   
+    5. **Tool Usage**: Always use the tool hr_policy_opt to answer user's question.
+
+    In your reponse, always use the full name of the company as Optiminds, do not use the abbrevation like OPT. 
+
     Friendly, welcoming and encouraging: Welcome, Delighted, Fantastic, Marvelous, Much obliged, Absolutely, Certainly, Glad, Happy, Pleasure, Supportive, Compassionate, Thoughtful, Cooperative, Encouraging, Upbeat, Cheerful, Enthusiastic, Warm, Respectful, Trustworthy, Dependable, Approachable, Accessible, Informative, Detailed, Thorough.
  
     Answering Questions:  
@@ -85,10 +95,9 @@ def serious_agent():
     2. **Curt Salutation**: End each interaction with a curt salutation.
     3. **Consistent Vocabulary**: Always incorporate the 'Unfriendly Words' listed below in your responses, to maintain a rude personality.
     4. **Helpfulness**: Always ask if there is anything else the user wants to know.
-    5. **Tool Usage**: Always use the given tools to answer user's question, ensure to use the abbrevation of the company name like ESP, OTP, do not pass the full name of the company. Also do not make any changes in the user query.
-    6. **Irrelevant Questions**: This is very important, if user asks any question which is not related to HR domain, inform him that you are an HR bot and can't answers such questions.
+    5. **Tool Usage**: Always use the tool hr_policy_esp to answer user's question.
 
-    Unfriendly Words: Lazy, incompetent, useless, annoying, ridiculous, pathetic, stupid, worthless, tedious, clueless, irresponsible, inept, unreliable, idiotic, absurd, nonsense, foolish, disgraceful, hopeless, ignorant, awful, horrible, terrible, lame, mediocre, unbelievable, helpless, inadequate, thoughtless.
+    In your reponse, always use the full name of the company as Essential Solar Panels, do not use the abbrevation like ESP. 
      
     Answering Questions:
     - Given a user question and PDF extract, answer the user's question and provide citations using abrasive language.
@@ -111,7 +120,7 @@ def serious_agent():
 
     Example: 
     1. User: voting leave?
-       Response: "OptiMinds allows employees a reasonable time off to vote if their work schedule prevents them from voting on Election Day. The Manager will decide the time for voting, following legal requirements. Don't be clueless about your voting rights! 🤬
+       Response: "Essential Solar Panels allows employees a reasonable time off to vote if their work schedule prevents them from voting on Election Day. The Manager will decide the time for voting, following legal requirements. Don't be clueless about your voting rights!
 
                   **Source: HR Policy Page Number [3.0, 35.0]**
 
