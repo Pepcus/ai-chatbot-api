@@ -38,8 +38,8 @@ def get_chat_response_OPT(query:str):
 evaluation_config = RunEvalConfig(
     evaluators=[
         "qa"  # correctness: right or wrong
-        # "context_qa",  # refer to example outputs
-        # "cot_qa",  # context_qa + reasoning
+        "context_qa",  # refer to example outputs
+        "cot_qa",  # context_qa + reasoning
     ]
 )
 

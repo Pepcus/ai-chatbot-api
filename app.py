@@ -35,4 +35,4 @@ def create_index(company: str, authorization: str = Header(None, convert_undersc
 
 if __name__ == '__main__':
     import uvicorn
-    # uvicorn.run(app)
+    uvicorn.run(app)
