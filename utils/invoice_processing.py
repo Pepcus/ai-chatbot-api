@@ -1,7 +1,12 @@
-from openai import OpenAI
-client = OpenAI()
+"""
+Filename: invoice_processing.py
+Author: Deepak Nigam
+Date created: 2024-06-05
+License: MIT License
+Description: This file contains invoice processing related functions.
+"""
 
-from config.config import  local_download_path
+from config.config import openai_client, openai_gpt_model
 from utils.image_processing import extract_text_from_image
 import fitz
 import mimetypes
@@ -101,14 +106,6 @@ def extract_text_based_on_file_type(file_type, file_path):
         print("Unsupported file type:", file_type)
         return None
 
-# file_name = "invoice.jpg"
-# file_type = get_file_type(filename=file_name)
-# print("File type:", file_type)
-
-# local_file_path = local_download_path + file_name
-
-# text = extract_text_based_on_file_type(file_type, local_file_path)
-
 def fetch_invoice_details(text):
     prompt='''You are developing a data extraction system that needs to parse information from various documents, including invoices. You need to extract specific details from the provided text and output them in a structured JSON format.
 
@@ -131,6 +128,6 @@ def fetch_invoice_details(text):
     '''+ text
 
     # Call Chat Completion API
-    response = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}])
+    response = openai_client.chat.completions.create(model=openai_gpt_model, messages=[{"role": "user", "content": prompt}])
     # Display AI assistant's response
     print(response.choices[0].message.content)

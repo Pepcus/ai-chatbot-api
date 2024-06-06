@@ -1,9 +1,13 @@
-import os
+"""
+Filename: image_processing.py
+Author: Deepak Nigam
+Date created: 2024-06-05
+License: MIT License
+Description: This file contains image processing related functions.
+"""
+
 from google.cloud import vision
 import io
-
-# Set the environment variable for authentication
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'gcp.json'
 
 # Initialize the Vision API client
 client = vision.ImageAnnotatorClient()
@@ -47,5 +51,3 @@ def extract_text_from_image(image_path):
     print('\nDetected Text:')
     print(detected_text)
     return detected_text
-
-# print(extract_text_from_image('downloads/invoice.png'))
