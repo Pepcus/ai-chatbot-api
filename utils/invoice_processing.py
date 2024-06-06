@@ -8,6 +8,7 @@ import mimetypes
 import pandas as pd
 from docx import Document
 import csv
+import json
 
 def get_file_type(filename):
     mime_type, _ = mimetypes.guess_type(filename)
@@ -134,3 +135,5 @@ def fetch_invoice_details(text):
     response = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}])
     # Display AI assistant's response
     print(response.choices[0].message.content)
+    invoice_details = json.loads(response.choices[0].message.content)
+    return invoice_details
