@@ -31,6 +31,11 @@ api_client_id = os.environ['API_CLIENT_ID']
 api_client_secret = os.environ['API_CLIENT_SECRET']
 local_download_path = os.environ['LOCAL_DOWNLOAD_PATH']
 pg_db_uri = os.environ['PG_DB_URI']
+db_name = os.environ['DB_NAME']
+db_user = os.environ['DB_USER']
+db_password = os.environ['DB_PASSWORD']
+db_host = os.environ['DB_HOST']
+db_port = os.environ['DB_PORT']
 
 #AIML-17
 LANGCHAIN_API_KEY = os.environ['LANGCHAIN_API_KEY']
