@@ -30,6 +30,7 @@ openai_llm = ChatOpenAI(
 api_client_id = os.environ['API_CLIENT_ID']
 api_client_secret = os.environ['API_CLIENT_SECRET']
 local_download_path = os.environ['LOCAL_DOWNLOAD_PATH']
+pg_db_uri = os.environ['PG_DB_URI']
 
 #AIML-17
 LANGCHAIN_API_KEY = os.environ['LANGCHAIN_API_KEY']
