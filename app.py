@@ -25,7 +25,7 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 # This example allows all origins, adjust as needed for production
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8000/"],  # In production, replace "*" with the actual origins
+    allow_origins=["*"],  # In production, replace "*" with the actual origins
     allow_credentials=True,
     allow_methods=["POST", "GET"],  # Make sure to allow the methods you use
     allow_headers=["Authorization", "Content-Type"],
@@ -58,8 +58,18 @@ def upload_invoice(file: UploadFile = File(...),authorization: str = Header(None
         shutil.copyfileobj(file.file, buffer)
     file_type=get_file_type(file.filename)
     text=extract_text_based_on_file_type(file_type,file_path)
-    fetch_invoice_details(text)    
-    return {"filename": file.filename, "message": "File successfully uploaded and stored."}
+    invoice_details=fetch_invoice_details(text)
+    print(fetch_invoice_details)    
+    return {
+        "filename": file.filename,
+        "invoiceNumber": invoice_details.get("Invoice Number"),
+        "invoiceDate": invoice_details.get("Invoice Date"),
+        "dueDate": invoice_details.get("Due Date"),
+        "balanceAmount": invoice_details.get("Balance Amount"),
+        "dueAmount": invoice_details.get("Due Amount"),
+        "paidTo": invoice_details.get("Paid To"),
+        "message": "File successfully uploaded and stored."
+    }
 
 if __name__ == '__main__':
     import uvicorn
