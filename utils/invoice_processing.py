@@ -78,8 +78,8 @@ def extract_text_from_csv(file_path):
 def extract_text_from_file(file_path):
     with open(file_path, 'r') as file:
         text = file.read()
-    return text     
-
+    return text
+     
 def extract_text_based_on_file_type(file_type, file_path):
     extraction_functions = {
         'application/pdf': extract_text_from_pdf,
@@ -91,47 +91,46 @@ def extract_text_based_on_file_type(file_type, file_path):
         'image/jpg': extract_text_from_image,
         'image/jpeg': extract_text_from_image
     }
-    
     if file_type in extraction_functions:
         print("======= {} =======".format(file_type))
         text_extraction_function = extraction_functions[file_type]
         text = text_extraction_function(file_path)
+        extracted_text=text
         return text
     else:
         print("Unsupported file type:", file_type)
         return None
 
-file_name = "invoice.jpg"
-file_type = get_file_type(filename=file_name)
-print("File type:", file_type)
+# file_name = "invoice.jpg"
+# file_type = get_file_type(filename=file_name)
+# print("File type:", file_type)
 
-local_file_path = local_download_path + file_name
+# local_file_path = local_download_path + file_name
 
-text = extract_text_based_on_file_type(file_type, local_file_path)
+# text = extract_text_based_on_file_type(file_type, local_file_path)
 
-print("=======final text=====", text)
+def fetch_invoice_details(text):
+    prompt='''You are developing a data extraction system that needs to parse information from various documents, including invoices. You need to extract specific details from the provided text and output them in a structured JSON format.
 
-prompt='''You are developing a data extraction system that needs to parse information from various documents, including invoices. You need to extract specific details from the provided text and output them in a structured JSON format.
+    Context/Text:
 
-Context/Text:
+    [Provide the context/text you want the model to extract information from. Include sample invoice information. If given text is empty or doesn't contain the required information, do not add anything from your end.]
 
-[Provide the context/text you want the model to extract information from. Include sample invoice information. If given text is empty or doesn't contain the required information, do not add anything from your end.]
+    Instructions:
+    Format:
+    Strictly adhere to the following format for your final response. Please extract the following details and organize them into a JSON format:
 
-Instructions:
-Format:
-Strictly adhere to the following format for your final response. Please extract the following details and organize them into a JSON format:
+    Invoice Number
+    Invoice Date
+    Due Date
+    Balance Amount
+    Due Amount
+    Paid To
+    Ensure that the JSON format is structured appropriately, with each detail clearly labeled.
 
-Invoice Number
-Invoice Date
-Due Date
-Balance Amount
-Due Amount
-Paid To
-Ensure that the JSON format is structured appropriately, with each detail clearly labeled.
+    '''+ text
 
- '''+ text
-
-# Call Chat Completion API
-response = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}])
-# Display AI assistant's response
-print(response.choices[0].message.content)
+    # Call Chat Completion API
+    response = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}])
+    # Display AI assistant's response
+    print(response.choices[0].message.content)

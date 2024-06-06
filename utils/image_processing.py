@@ -48,4 +48,4 @@ def extract_text_from_image(image_path):
     print(detected_text)
     return detected_text
 
-print(extract_text_from_image('downloads/invoice.png'))
+# print(extract_text_from_image('downloads/invoice.png'))
