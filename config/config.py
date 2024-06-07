@@ -66,7 +66,7 @@ with tempfile.NamedTemporaryFile(delete=False, mode='w', suffix='.json') as temp
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_file_path
 
 #Invoice Path 
-UPLOAD_DIR = Path(__file__).resolve().parent / "uploads"
+UPLOAD_DIR = "uploads"
 
 # CORS settings
 ALLOW_ORIGINS = ["*"]  # In production, replace "*" with the actual origins

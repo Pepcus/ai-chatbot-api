@@ -17,13 +17,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from utils.general import get_file_type,extract_text_based_on_file_type
 from utils.invoice_processing import fetch_invoice_details
 from config.config import UPLOAD_DIR,ALLOW_ORIGINS,ALLOW_HEADERS,ALLOW_CREDENTIALS,ALLOW_METHODS
-
+import os
 
 app = FastAPI()
 
 # Define the directory to store uploaded files
 UPLOAD_DIR = UPLOAD_DIR
-UPLOAD_DIR.mkdir(exist_ok=True)
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 # This example allows all origins, adjust as needed for production
 app.add_middleware(
     CORSMiddleware,
@@ -57,8 +58,7 @@ def upload_invoice(file: UploadFile = File(...),authorization: str = Header(None
     
     is_authorized_request(auth=authorization)
     #Configuring the upload path
-    file_path = UPLOAD_DIR / file.filename
-    #Creating the file using file object and storing it 
+    file_path = os.path.join(UPLOAD_DIR, file.filename)   
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
