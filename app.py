@@ -53,21 +53,22 @@ def create_index(company: str, authorization: str = Header(None, convert_undersc
 @app.post("/api/invoice")
 def upload_invoice(file: UploadFile = File(...),authorization: str = Header(None, convert_underscores=True)):
     is_authorized_request(auth=authorization)
-    file_path = UPLOAD_DIR / file.filename
+    file_name = file.filename
+    file_path = UPLOAD_DIR / file_name
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    file_type=get_file_type(file.filename)
+    file_type=get_file_type(file_name)
     text=extract_text_based_on_file_type(file_type,file_path)
     invoice_details=fetch_invoice_details(text)
     print(fetch_invoice_details)    
     return {
-        "filename": file.filename,
-        "invoiceNumber": invoice_details.get("Invoice Number"),
-        "invoiceDate": invoice_details.get("Invoice Date"),
-        "dueDate": invoice_details.get("Due Date"),
-        "balanceAmount": invoice_details.get("Balance Amount"),
-        "dueAmount": invoice_details.get("Due Amount"),
-        "paidTo": invoice_details.get("Paid To"),
+        "filename": file_name,
+        "invoiceNumber": invoice_details.get("invoice_number"),
+        "invoiceDate": invoice_details.get("invoice_date"),
+        "dueDate": invoice_details.get("due_date"),
+        "balanceAmount": invoice_details.get("balance_amount"),
+        "dueAmount": invoice_details.get("due_amount"),
+        "paidTo": invoice_details.get("paid_to"),
         "message": "File successfully uploaded and stored."
     }
 
