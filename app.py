@@ -52,7 +52,7 @@ def create_index(company: str, authorization: str = Header(None, convert_undersc
     is_authorized_request(auth=authorization)
     build_pinecone_index(company)
 
-@app.post("/api/invoice")
+@app.post("/api/invoice/upload")
 def upload_invoice(file: UploadFile = File(...),authorization: str = Header(None, convert_underscores=True)):
     
     is_authorized_request(auth=authorization)
@@ -64,6 +64,7 @@ def upload_invoice(file: UploadFile = File(...),authorization: str = Header(None
         shutil.copyfileobj(file.file, buffer)
     file_type=get_file_type(file_name)
 
+    #Extract the file data based on extension
     file_type=get_file_type(file.filename)
     text=extract_text_based_on_file_type(file_type,file_path)
     invoice_details=fetch_invoice_details(text)
@@ -79,7 +80,7 @@ def upload_invoice(file: UploadFile = File(...),authorization: str = Header(None
         "message": "File successfully uploaded."
     }
 
-@app.post("/api/invoice/accept")
+@app.post("/api/invoice/reconsile")
 def accept_invoice(authorization: str = Header(None, convert_underscores=True)):
     # Authorization check
     is_authorized_request(auth=authorization)
