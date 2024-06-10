@@ -5,7 +5,7 @@ Date created: 2024-06-05
 License: MIT License
 Description: This file contains invoice processing related functions.
 """
-
+from utils.logs import logger
 from config.config import openai_client, openai_gpt_model
 import json
 
@@ -59,6 +59,6 @@ def fetch_invoice_details(text):
     # Call Chat Completion API
     response = openai_client.chat.completions.create(model=openai_gpt_model, messages=[{"role": "user", "content": prompt}])
     # Display AI assistant's response
-    print(response.choices[0].message.content)
+    logger.info(response.choices[0].message.content)
     invoice_details = json.loads(response.choices[0].message.content)
     return invoice_details

@@ -131,11 +131,11 @@ def extract_text_based_on_file_type(file_type, file_path):
         'image/jpeg': extract_text_from_image
     }
     if file_type in extraction_functions:
-        print("======= {} =======".format(file_type))
+        logger.info("======= {} =======".format(file_type))
         text_extraction_function = extraction_functions[file_type]
         text = text_extraction_function(file_path)
         extracted_text=text
         return text
     else:
-        print("Unsupported file type:", file_type)
-        return None    
+        logger.error("Unsupported file type:", file_type)
+        return None

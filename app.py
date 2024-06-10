@@ -68,7 +68,7 @@ def upload_invoice(file: UploadFile = File(...),authorization: str = Header(None
     file_type=get_file_type(file.filename)
     text=extract_text_based_on_file_type(file_type,file_path)
     invoice_details=fetch_invoice_details(text)
-    print(fetch_invoice_details)    
+    logger.info(fetch_invoice_details)    
     return {
         "filename": file_name,
         "invoiceNumber": invoice_details.get("invoice_number"),
