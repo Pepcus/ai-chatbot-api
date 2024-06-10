@@ -6,17 +6,17 @@ License: MIT License
 Description: Entry point of the app, contains API implementation.
 """
 
+from utils.logs import logger
 from fastapi import FastAPI, Header,File,UploadFile
 from pydantic import BaseModel
 from utils.pinecone_vectorstore import build_pinecone_index
 from utils.chat import get_chat_response
 from auth import is_authorized_request
 import shutil
-from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
 from utils.general import get_file_type,extract_text_based_on_file_type
 from utils.invoice_processing import fetch_invoice_details
-from config.config import UPLOAD_DIR,ALLOW_ORIGINS,ALLOW_HEADERS,ALLOW_CREDENTIALS,ALLOW_METHODS
+from config.config import UPLOAD_DIR, ALLOW_ORIGINS, ALLOW_HEADERS, ALLOW_CREDENTIALS, ALLOW_METHODS
 import os
 
 app = FastAPI()
