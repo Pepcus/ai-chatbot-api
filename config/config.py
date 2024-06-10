@@ -14,6 +14,7 @@ from openai import OpenAI
 import os
 import json
 import tempfile
+from pathlib import Path
 
 load_dotenv()
 gcp_bucket_name = os.environ['GCP_BUCKET_NAME']
@@ -63,3 +64,12 @@ with tempfile.NamedTemporaryFile(delete=False, mode='w', suffix='.json') as temp
 
 # Set the GOOGLE_APPLICATION_CREDENTIALS environment variable to the path of the temporary file
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_file_path
+
+#Invoice Path 
+UPLOAD_DIR = "uploads"
+
+# CORS settings
+ALLOW_ORIGINS = ["*"]  # In production, replace "*" with the actual origins
+ALLOW_CREDENTIALS = True
+ALLOW_METHODS = ["POST", "GET"]  # Make sure to allow the methods you use
+ALLOW_HEADERS = ["Authorization", "Content-Type"]
