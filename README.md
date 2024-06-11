@@ -122,68 +122,68 @@ HR Policy Question Answering: TruLens provided detailed programmatic feedback on
 ========================================================================================================================================================================================
 
 **Project Setup Guide**
+**Frontend Setup**
+**Prerequisits**
+
+1) Following softwares are installed on your computer
+   node 20.11.0
+   npm 10.5.0
+   pnpm 8.15.4
+
+2) You have an account on Vercel. (https://vercel.com/signup)
+
+**Installation Steps**
+1) Login to your vercel account and create a postgres database there.
+2) Clone the repository from https://github.com/Pepcus/ai-chatbot-app on your computer.
+3) Create a .env file in the root of the project and add the following configuration:
+  - **OPENAI_API_KEY**=Your OpenAI API key
+  - **AUTH_SECRET**=Generate a random secret: Generate Secret or use openssl rand -base64 32
+  - **NEXTAUTH_URL**="http://localhost:3000"
+  - **API_SERVER_URL**="http://127.0.0.1:8000"
+  - **API_CLIENT_SECRET**=your API clinet secret (A base 64 string of the API username and password)
+   
+4) Run the SQL queries available in init.sql to your database.
+5) Install the dependencies from the project root using: pnpm install
+6) Run the project using: pnpm dev
+
 **Backend Setup**
 **Prerequisits:**
-1. Python 3.10.14.
-2. pip 24.0
-3. Create .env file with following details 
-3. Google Cloud Storage credentials (for uploading and downloading reference data files for embeddings)
-4. Vercel account with postgres database (if you don't want to use local postgres DB)
+1) Following softwares are installed on your computer
+   Python 3.10.14.
+   pip 24.0
 
-### .env File Details
-Create a `.env` file and define the following parameters:
-
-- **OPENAI_API_KEY**: Your OpenAI API key
-- **PINECONE_API_KEY**: Your Pinecone API key
-- **GCP_BUCKET_NAME**: Google Cloud Storage bucket name
-- **LOCAL_DOWNLOAD_PATH**: Local path for downloading files
-- **API_CLIENT_ID**: Client ID for API access
-- **API_CLIENT_SECRET**: Client secret for API access
-- **LANGCHAIN_API_KEY**: Langchain API key
-- **LANGCHAIN_TRACING_V2**: Langchain tracing version 2
-- **LANGCHAIN_ENDPOINT**: Langchain API endpoint
-- **LANGCHAIN_PROJECT**: Langchain project name
-- **GCP_TYPE**: Google Cloud Platform type
-- **GCP_PROJECT_ID**: Google Cloud Platform project ID
-- **GCP_PRIVATE_KEY_ID**: Google Cloud Platform private key ID
-- **GCP_PRIVATE_KEY**: Google Cloud Platform private key
-- **GCP_CLIENT_EMAIL**: Google Cloud Platform client email
-- **GCP_CLIENT_ID**: Google Cloud Platform client ID
-- **GCP_AUTH_URI**: Google Cloud Platform auth URI
-- **GCP_TOKEN_URI**: Google Cloud Platform token URI
-- **GCP_AUTH_PROVIDER_X509_CERT_URL**: Google Cloud Platform auth provider X509 cert URL
-- **GCP_CLIENT_X509_CERT_URL**: Google Cloud Platform client X509 cert URL
-- **GCP_UNIVERSE_DOMAIN**: Google Cloud Platform universe domain
-
+2) You have an account on google cloud storage (for uploading and downloading reference data files for embeddings)
+3) You have an account on the Pinecone vector database.
+4) You have an accout on Langchain.
+   
 **Installation Steps:**
 1. Clone the repository from: https://github.com/Pepcus/ai-chatbot-api
-2. Make the necessary configuration changes in the .env file.
+2. Create a .env file in the root of the project and add the following configuration
+  - **OPENAI_API_KEY**=Your OpenAI API key
+  - **PINECONE_API_KEY**=Your Pinecone API key
+  - **GCP_BUCKET_NAME**=Google Cloud Storage bucket name
+  - **LOCAL_DOWNLOAD_PATH**=Local path for downloading files
+  - **API_CLIENT_ID**=Client ID for API access
+  - **API_CLIENT_SECRET**=Client secret for API access
+  - **LANGCHAIN_API_KEY**=Langchain API key
+  - **LANGCHAIN_TRACING_V2**=Langchain tracing version 2
+  - **LANGCHAIN_ENDPOINT**=Langchain API endpoint
+  - **LANGCHAIN_PROJECT**=Langchain project name
+  - **GCP_TYPE**=Google Cloud Platform type
+  - **GCP_PROJECT_ID**=Google Cloud Platform project ID
+  - **GCP_PRIVATE_KEY_ID**=Google Cloud Platform private key ID
+  - **GCP_PRIVATE_KEY**=Google Cloud Platform private key
+  - **GCP_CLIENT_EMAIL**=Google Cloud Platform client email
+  - **GCP_CLIENT_ID**=Google Cloud Platform client ID
+  - **GCP_AUTH_URI**=Google Cloud Platform auth URI
+  - **GCP_TOKEN_URI**=Google Cloud Platform token URI
+  - **GCP_AUTH_PROVIDER_X509_CERT_URL**=Google Cloud Platform auth provider X509 cert URL
+  - **GCP_CLIENT_X509_CERT_URL**=Google Cloud Platform client X509 cert URL
+  - **GCP_UNIVERSE_DOMAIN**=Google Cloud Platform universe domain
+   
 3. Install the dependencies from the project root using: pip install --no-cache-dir -r requirements.txt
-4. Run the project using: python app.py 
-
-**FrontEnd Setup**
-
-**Prerequisits:**
-1. node 20.11.0
-2. npm 10.5.0
-3. pnpm 8.15.4
-
-### .env File Details for Frontend
-Create a `.env` file and define the following parameters:
-
-- **OPENAI_API_KEY**: Your OpenAI API key
-- **AUTH_SECRET**: Generate a random secret: [Generate Secret](https://generate-secret.vercel.app/32) or use `openssl rand -base64 32`
-- **PGSQL_HOST**: PostgreSQL host
-- **PGSQL_PORT**: PostgreSQL port
-- **PGSQL_DATABASE**: PostgreSQL database name
-- **PGSQL_USER**: PostgreSQL user
-- **PGSQL_PASSWORD**: PostgreSQL password
-- **NEXTAUTH_URL**: NextAuth URL
-- **API_SERVER_URL**: API server URL
-- **API_CLIENT_SECRET**: Client secret for API access
-
-**Steps:**
-1. Clone the repository from:: https://github.com/Pepcus/ai-chatbot-app
-2. Make the necessary configuration changes in the .env file.
-3. Install the dependencies from the project root using: pnpm install
-4. Run the project using: pnpm dev
+4. Run the project using: python app.py
+5. Create a bucket on the google cloud platform with the name provided in the .env file (GCP_BUCKET_NAME)
+6. Upload the HR policy document on the bucket, insure to keep the name of the policy document in full capital letters.
+7. Run the indexing on the pinecone vector database using the following curl:
+   curl --location --request POST 'http://127.0.0.1:8000/index/ERC'
