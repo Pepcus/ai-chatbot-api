@@ -38,8 +38,7 @@ def get_chat_response_OPT(query:str):
 evaluation_config = RunEvalConfig(
     evaluators=[
         "qa"  # correctness: right or wrong
-        "context_qa",  # refer to example outputs
-        "cot_qa",  # context_qa + reasoning
+
     ]
 )
 
@@ -80,10 +79,8 @@ logger.info("Mean of feedback.correctness ESP", str(mean_correctness_esp))
 correctness_values=mean_correctness_esp+mean_correctness_opt/2
 logger.info(correctness_values)
 
-if int(correctness_values)>=0.5 :
+if float(correctness_values)>=0.5 :
       logger.info("Test case passed")
 else:
     logger.info("Error!!!!!!!!!!!")
-    ##raise ValueError("Please review the Code ! Test cases are failed")
-    
-
+    raise ValueError("Please review the Code ! Test cases are failed")
