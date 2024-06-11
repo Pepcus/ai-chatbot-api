@@ -155,8 +155,10 @@ HR Policy Question Answering: TruLens provided detailed programmatic feedback on
 3) You have an account on the Pinecone vector database.
 4) You have an accout on Langchain.
 5) Setup an account on Langsmith
-6) Create Databases in Langsmith:-
+6) Create Databases in Langsmith
+ 
    a) HR Bot Testing Database for OPT: Create a database with sample input and output for unit testing.
+
    b) HR Bot Testing Database for ESP: Create another database with sample input and output for unit testing.
    
 **Installation Steps:**
