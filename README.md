@@ -151,10 +151,13 @@ HR Policy Question Answering: TruLens provided detailed programmatic feedback on
 1) Following softwares are installed on your computer
    Python 3.10.14.
    pip 24.0
-
 2) You have an account on google cloud storage (for uploading and downloading reference data files for embeddings)
 3) You have an account on the Pinecone vector database.
 4) You have an accout on Langchain.
+5) Setup an account on Langsmith
+6) Create Databases in Langsmith:-
+   a) HR Bot Testing Database for OPT: Create a database with sample input and output for unit testing.
+   b) HR Bot Testing Database for ESP: Create another database with sample input and output for unit testing.
    
 **Installation Steps:**
 1. Checkout the code from from https://github.com/Pepcus/ai-chatbot-app (main branch) on your computer.
