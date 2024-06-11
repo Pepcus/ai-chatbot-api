@@ -134,7 +134,7 @@ HR Policy Question Answering: TruLens provided detailed programmatic feedback on
 
 **Installation Steps**
 1) Login to your vercel account and create a postgres database there.
-2) Clone the repository from https://github.com/Pepcus/ai-chatbot-app on your computer.
+2) Checkout the code from from https://github.com/Pepcus/ai-chatbot-app (main branch) on your computer.
 3) Create a .env file in the root of the project and add the following configuration:
   - **OPENAI_API_KEY**=Your OpenAI API key
   - **AUTH_SECRET**=Generate a random secret: Generate Secret or use openssl rand -base64 32
@@ -157,7 +157,7 @@ HR Policy Question Answering: TruLens provided detailed programmatic feedback on
 4) You have an accout on Langchain.
    
 **Installation Steps:**
-1. Clone the repository from: https://github.com/Pepcus/ai-chatbot-api
+1. Checkout the code from from https://github.com/Pepcus/ai-chatbot-app (main branch) on your computer.
 2. Create a .env file in the root of the project and add the following configuration
   - **OPENAI_API_KEY**=Your OpenAI API key
   - **PINECONE_API_KEY**=Your Pinecone API key
